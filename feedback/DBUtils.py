@@ -69,13 +69,13 @@ class DBUtils:
 
     def getTradesExit(self, date, startTime, endTime):
         global databaseObject
-        queryTrades = "SELECT individual_id, trade_type, entry_qty, exit_price FROM tradesheet_data_table WHERE exit_date='" + str(date) + \
+        queryTrades = "SELECT individual_id, trade_type, entry_qty, entry_price, exit_price FROM tradesheet_data_table WHERE exit_date='" + str(date) + \
                       "' AND exit_time>='" + str(startTime) + "' AND exit_time<'" + str(endTime) + "'"
         return databaseObject.Execute(queryTrades)
 
     def getTradesExitEnd(self, date, startTime, endTime):
         global databaseObject
-        queryTrades = "SELECT individual_id, trade_type, entry_qty, exit_price FROM tradesheet_data_table WHERE exit_date='" + str(date) + \
+        queryTrades = "SELECT individual_id, trade_type, entry_qty, entry_price, exit_price FROM tradesheet_data_table WHERE exit_date='" + str(date) + \
                       "' AND exit_time>='" + str(startTime) + "' AND exit_time<='" + str(endTime) + "'"
         return databaseObject.Execute(queryTrades)
 
@@ -104,7 +104,6 @@ class DBUtils:
                                  "(" + str(tradeId) + ", " + str(individualId) + ", " + str(tradeType) + \
                                  ", '" + str(entryDate) + "', '" + str(mtmTime) + "', " + str(mtm) + ")"
                 return databaseObject.Execute(queryInsertMTM)
-
 
     def getStartDate (self, individualId):
         queryDate = "SELECT MAX(last_reallocation_date), individual_id FROM reallocation_table WHERE individual_id=" + str(individualId)
@@ -254,7 +253,6 @@ class DBUtils:
                                      str(currentState) + " AND column_num=1"
                     return databaseObject.Execute(queryNextState)
 
-
     def reduceFreeAsset(self, individualId, unitQty):
         global databaseObject
         resultCurrentFreeAsset = databaseObject.Execute("SELECT free_asset, total_asset FROM asset_allocation_table "
@@ -271,7 +269,6 @@ class DBUtils:
                 queryUpdate = "UPDATE asset_allocation_table SET free_asset=0, total_asset=" + str(round(newTotalAsset,4)) + \
                               " WHERE individual_id=" + str(individualId)
                 return databaseObject.Execute(queryUpdate)
-
 
     def increaseFreeAsset(self, individualId, unitQty):
         global databaseObject
@@ -292,7 +289,6 @@ class DBUtils:
                               ", total_asset=" + str(round(newTotalAsset,4)) + " WHERE individual_id=" + str(individualId)
                 #print(queryUpdate)
                 return databaseObject.Execute(queryUpdate)
-
 
     def getFreeAsset(self, individualId):
         global databaseObject

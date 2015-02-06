@@ -26,7 +26,7 @@ if __name__ == "__main__":
     dbObject.dbQuery("DELETE FROM q_matrix_table")
 
     date = datetime(2012, 4, 9).date()
-    periodEndDate = datetime(2012, 12, 20).date()
+    periodEndDate = datetime(2013, 12, 20).date()
     print('date : ' + str(date))
     startTime = timedelta(hours=9, minutes=15)
     endTime = timedelta(hours=10, minutes=30)
@@ -34,7 +34,6 @@ if __name__ == "__main__":
     lastCheckedTime = timedelta(hours=9, minutes=15)
     print('Resetting asset allocation table')
     dbObject.resetAssetAllocation(date, startTime)
-    dbObject
     done = False
 
     while (not done):
@@ -50,12 +49,12 @@ if __name__ == "__main__":
 
                     print('Fetching trades that are to exit')
                     resultTradesExit = dbObject.getTradesExit(date, lastCheckedTime, entryTime)
-                    for id, type, qty, price in resultTradesExit:
-                        freedAsset = None
+                    for id, type, qty, entry_price, exit_price in resultTradesExit:
+                        freedAsset = 0
                         if type==0:
-                            freedAsset = qty*price*(-1)
+                            freedAsset = qty*exit_price*(-1)
                         else:
-                            freedAsset = qty*price
+                            freedAsset = qty*(2*entry_price - exit_price)*(-1)
                         dbObject.updateIndividualAsset(gv.dummyIndividualId, freedAsset)
                         dbObject.updateIndividualAsset(id, freedAsset)
                     lastCheckedTime = entryTime
@@ -63,10 +62,7 @@ if __name__ == "__main__":
                     print('Fetching asset available')
                     resultAvailable = dbObject.getFreeAsset(gv.dummyIndividualId)
                     print('Asset needed for this trade = ')
-                    if tradeType==0:
-                        usedAsset = entryQty*entryPrice
-                    else:
-                        usedAsset = entryQty*entryPrice*(-1)
+                    usedAsset = entryQty*entryPrice
                     print(usedAsset)
                     for freeAssetTotal, dummy1 in resultAvailable:
                         print('Checking if asset is available for this amount')
@@ -111,12 +107,12 @@ if __name__ == "__main__":
                 else:
                     print('Fetching trades that are to exit by the day end')
                     resultTradesExit = dbObject.getTradesExitEnd(date, lastCheckedTime, endTime)
-                    for id, type, qty, price in resultTradesExit:
-                        freedAsset = None
+                    for id, type, qty, entry_price, exit_price in resultTradesExit:
+                        freedAsset = 0
                         if type==0:
-                            freedAsset = qty*price*(-1)
+                            freedAsset = qty*exit_price*(-1)
                         else:
-                            freedAsset = qty*price
+                            freedAsset = qty*(2*entry_price - exit_price)*(-1)
                         dbObject.updateIndividualAsset(gv.dummyIndividualId, freedAsset)
                         dbObject.updateIndividualAsset(id, freedAsset)
 
