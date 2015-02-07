@@ -76,7 +76,7 @@ class DBUtils:
     def getTradesExitEnd(self, date, startTime, endTime):
         global databaseObject
         queryTrades = "SELECT individual_id, trade_type, entry_qty, entry_price, exit_price FROM tradesheet_data_table WHERE exit_date='" + str(date) + \
-                      "' AND exit_time>='" + str(startTime) + "' AND exit_time<='" + str(endTime) + "'"
+                      "' AND exit_time>='" + str(startTime) + "'"
         return databaseObject.Execute(queryTrades)
 
     def getPriceSeries (self, startDate, startTime, endDate, endTime):
