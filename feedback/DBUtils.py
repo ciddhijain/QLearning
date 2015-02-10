@@ -302,7 +302,7 @@ class DBUtils:
 
     def resetAssetAllocation(self, date, time):
         global databaseObject
-        databaseObject.Execute("DELETE FROM asset_allocation_table")
+        #databaseObject.Execute("DELETE FROM asset_allocation_table")
         databaseObject.Execute("INSERT INTO asset_allocation_table"
                                " (individual_id, total_asset, used_asset, free_asset)"
                                " VALUES"
@@ -329,54 +329,103 @@ class DBUtils:
     def getLongNetPL(self, startDate, endDate):
         global databaseObject
         queryPL = "SELECT SUM((exit_price-entry_price)*entry_qty),1 FROM tradesheet_data_table WHERE entry_date>='" + str(startDate) + \
-                  "' AND entry_date<='" + str(endDate) + "' AND trade_type=1"
+                  "' AND entry_date<='" + str(endDate) + "' AND trade_type=0"
         return databaseObject.Execute(queryPL)
 
     # Function to return Net Profit-Loss of Short trades within an interval
     def getShortNetPL(self, startDate, endDate):
         global databaseObject
         queryPL = "SELECT SUM((entry_price-exit_price)*entry_qty),1 FROM tradesheet_data_table WHERE entry_date>='" + str(startDate) + \
-                  "' AND entry_date<='" + str(endDate) + "' AND trade_type=0"
+                  "' AND entry_date<='" + str(endDate) + "' AND trade_type=1"
         return databaseObject.Execute(queryPL)
 
     # Function to return number of Long trades in an interval
     def getLongTrades(self, startDate, endDate):
         global databaseObject
         queryTrades = "SELECT COUNT(*),1 FROM tradesheet_data_table WHERE entry_date>='" + str(startDate) + "' AND entry_date<='" + str(endDate) + \
-                      "' AND trade_type=1"
+                      "' AND trade_type=0"
         return databaseObject.Execute(queryTrades)
 
     # Function to return number of Short trades in an interval
     def getShortTrades(self, startDate, endDate):
         global databaseObject
         queryTrades = "SELECT COUNT(*),1 FROM tradesheet_data_table WHERE entry_date>='" + str(startDate) + "' AND entry_date<='" + str(endDate) + \
-                      "' AND trade_type=0"
+                      "' AND trade_type=1"
         return databaseObject.Execute(queryTrades)
 
     # Function to return Net Profit-Loss of Long trades in original table within an interval
     def getRefLongNetPL(self, startDate, endDate):
         global databaseObject
         queryPL = "SELECT SUM((exit_price-entry_price)*entry_qty),1 FROM old_tradesheet_data_table WHERE entry_date>='" + str(startDate) + \
-                  "' AND entry_date<='" + str(endDate) + "' AND trade_type=1"
+                  "' AND entry_date<='" + str(endDate) + "' AND trade_type=0"
         return databaseObject.Execute(queryPL)
 
     # Function to return Net Profit-Loss of Short trades in original table within an interval
     def getRefShortNetPL(self, startDate, endDate):
         global databaseObject
         queryPL = "SELECT SUM((entry_price-exit_price)*entry_qty),1 FROM old_tradesheet_data_table WHERE entry_date>='" + str(startDate) + \
-                  "' AND entry_date<='" + str(endDate) + "' AND trade_type=0"
+                  "' AND entry_date<='" + str(endDate) + "' AND trade_type=1"
         return databaseObject.Execute(queryPL)
 
     # Function to return number of Long trades in original table within an interval
     def getRefLongTrades(self, startDate, endDate):
         global databaseObject
         queryTrades = "SELECT COUNT(*),1 FROM old_tradesheet_data_table WHERE entry_date>='" + str(startDate) + "' AND entry_date<='" + str(endDate) + \
-                      "' AND trade_type=1"
+                      "' AND trade_type=0"
         return databaseObject.Execute(queryTrades)
 
     # Function to return number of Short trades in original table within an interval
     def getRefShortTrades(self, startDate, endDate):
         global databaseObject
         queryTrades = "SELECT COUNT(*),1 FROM old_tradesheet_data_table WHERE entry_date>='" + str(startDate) + "' AND entry_date<='" + str(endDate) + \
-                      "' AND trade_type=0"
+                      "' AND trade_type=1"
         return databaseObject.Execute(queryTrades)
+
+    # Function to return asset at month end
+    def getAssetMonthly(self, month, year):
+        global databaseObject
+        queryAsset = "SELECT total_asset, 1 FROM asset_daily_allocation_table WHERE " \
+                     "date=(SELECT MAX(date) FROM asset_daily_allocation_table WHERE MONTH(date)=" + str(month) + " AND YEAR(date)=" + str(year) + ")"
+        return databaseObject.Execute(queryAsset)
+
+    # Function to return maximum and minimum asset in the month
+    def getAssetMonthlyMaxMin(self, month, year):
+        global databaseObject
+        queryAsset = "SELECT MAX(total_asset), MIN(total_asset) FROM asset_daily_allocation_table WHERE MONTH(date)=" + str(month) + " AND YEAR(date)=" + str(year)
+        return databaseObject.Execute(queryAsset)
+
+    # Function to return trades per month
+    def getTradesMonthly(self):
+        global databaseObject
+        queryTrades = "SELECT count(*), MONTH(entry_date), YEAR(entry_date) FROM tradesheet_data_table GROUP BY YEAR(entry_date), MONTH(entry_date)"
+        return databaseObject.Execute(queryTrades)
+
+    # Function to return trades per month in base tradesheet
+    def getRefTradesMonthly(self):
+        global databaseObject
+        queryTrades = "SELECT count(*), MONTH(entry_date), YEAR(entry_date) FROM old_tradesheet_data_table GROUP BY YEAR(entry_date), MONTH(entry_date)"
+        return databaseObject.Execute(queryTrades)
+
+    # Function to return Long NetPL and Long trades per month
+    def getNetPLLongMonthly(self):
+        global databaseObject
+        queryPL = "SELECT SUM((exit_price-entry_price)*entry_qty), COUNT(*), MONTH(entry_date), YEAR(entry_date) FROM tradesheet_data_table WHERE trade_type=0 GROUP BY YEAR(entry_date), MONTH(entry_date)"
+        return databaseObject.Execute(queryPL)
+
+    # Function to return Short NetPL and Short trades per month
+    def getNetPLShortMonthly(self):
+        global databaseObject
+        queryPL = "SELECT SUM((entry_price-exit_price)*entry_qty), COUNT(*), MONTH(entry_date), YEAR(entry_date) FROM tradesheet_data_table WHERE trade_type=1 GROUP BY YEAR(entry_date), MONTH(entry_date)"
+        return databaseObject.Execute(queryPL)
+
+    # Function to return Long NetPL and Long trades per month in base tradesheet
+    def getRefNetPLLongMonthly(self):
+        global databaseObject
+        queryPL = "SELECT SUM((exit_price-entry_price)*entry_qty), COUNT(*), MONTH(entry_date), YEAR(entry_date) FROM old_tradesheet_data_table WHERE trade_type=0 GROUP BY YEAR(entry_date), MONTH(entry_date)"
+        return databaseObject.Execute(queryPL)
+
+    # Function to return Short NetPL and Short trades per month in base tradesheet
+    def getRefNetPLShortMonthly(self):
+        global databaseObject
+        queryPL = "SELECT SUM((entry_price-exit_price)*entry_qty), COUNT(*), MONTH(entry_date), YEAR(entry_date) FROM old_tradesheet_data_table WHERE trade_type=1 GROUP BY YEAR(entry_date), MONTH(entry_date)"
+        return databaseObject.Execute(queryPL)
