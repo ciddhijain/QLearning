@@ -13,7 +13,6 @@ if __name__ == "__main__":
                      "total_asset decimal(15,4)"
                      ")")
 
-    '''
     dbObject.dbQuery("CREATE TABLE tradesheet_data_table"
                      " ("
                      " trade_id int,"
@@ -41,12 +40,14 @@ if __name__ == "__main__":
                      " exit_time time,"
                      " exit_price float"
                      " )")
+
     dbObject.dbQuery("CREATE TABLE price_series_table"
                      " ("
                      " date date,"
                      " time time,"
                      " price float"
                      " )")
+
     dbObject.dbQuery("CREATE TABLE mtm_table"
                      " ("
                      " trade_id int,"
@@ -56,7 +57,6 @@ if __name__ == "__main__":
                      " time time,"
                      " mtm float"
                      " )")
-
 
     dbObject.dbQuery("CREATE TABLE asset_allocation_table"
                      " ("
@@ -81,6 +81,8 @@ if __name__ == "__main__":
                      " last_reallocation_time time,"
                      " last_state int"
                      " )")
+
+    '''
 
     query1 = "LOAD DATA INFILE 'E:/Studies/MTP/MTP Code/IndividualInfo.csv'" \
              " INTO TABLE old_tradesheet_data_table" \

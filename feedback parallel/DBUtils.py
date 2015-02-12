@@ -1,4 +1,4 @@
-__author__ = 'IIT'
+__author__ = 'Ciddhi'
 
 from DatabaseManager import *
 from sqlalchemy import create_engine
