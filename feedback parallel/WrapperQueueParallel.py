@@ -63,8 +63,8 @@ if __name__ == "__main__":
     dbObject.dbQuery("DELETE FROM reallocation_table")
     dbObject.dbQuery("DELETE FROM q_matrix_table")
 
-    date = datetime(2012, 4, 9).date()
-    periodEndDate = datetime(2013, 12, 20).date()
+    date = gv.startDate
+    periodEndDate = gv.endDate
     print('date : ' + str(date))
     startTime = timedelta(hours=9, minutes=15)
     endTime = timedelta(hours=10, minutes=30)

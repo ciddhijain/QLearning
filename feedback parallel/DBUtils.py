@@ -13,7 +13,7 @@ class DBUtils:
         db_username = 'root'
         db_password = 'controljp'
         db_host = '127.0.0.1'
-        db_name = 'MKT'
+        db_name = gv.databaseName
         db_port = '3306'
         global databaseObject
         databaseObject = DatabaseManager(db_username, db_password,db_host,db_port, db_name)

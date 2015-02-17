@@ -1,3 +1,13 @@
+The following steps are to be performed for running the code:
+1. Create a new database and update variable 'databaseName' in file 'GlobalVariables.py'
+2. Run file 'Setup.py'.
+3. Import base tradesheet in table 'old_tradesheet_data_table'
+4. Set values of other variables in 'GlobalVariables.py' as per requirement.
+5. Run file 'WrapperQueueParallel.py'
+6. Export tables 'tradesheet_data_table', 'asset_allocation_table', 'reallocation_table', 'asset_daily_allocation_table' before setting up another run on same DB.
+
+
+Following are details about a few files:
 1. Setup.py - This is used to set up the following database tables:
     a. old_tradesheet_data_table - this contains the original tradesheet
     b. price_series_table - this contains the price series
