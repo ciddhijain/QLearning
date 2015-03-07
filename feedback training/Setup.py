@@ -6,6 +6,46 @@ if __name__ == "__main__":
     dbObject = DBUtils()
     dbObject.dbConnect()
 
+    dbObject.dbQuery("CREATE TABLE training_mtm_table"
+                     " ("
+                     " trade_id int,"
+                     " individual_id int,"
+                     " trade_type int,"
+                     " date date,"
+                     " time time,"
+                     " mtm float"
+                     " )")
+
+    '''
+
+    dbObject.dbQuery("CREATE TABLE training_tradesheet_data_table"
+                     " ("
+                     " trade_id int,"
+                     " individual_id int,"
+                     " trade_type int,"
+                     " entry_date date,"
+                     " entry_time time,"
+                     " entry_price float,"
+                     " entry_qty int,"
+                     " exit_date date,"
+                     " exit_time time,"
+                     " exit_price float"
+                     " )")
+
+    dbObject.dbQuery("CREATE TABLE training_asset_allocation_table"
+                     " ("
+                     " individual_id int,"
+                     " total_asset decimal(15,4),"
+                     " used_asset decimal(15,4),"
+                     " free_asset decimal(15,4)"
+                     " )")
+
+    dbObject.dbQuery("CREATE TABLE ranking_table"
+                     " ("
+                     " individual_id int,"
+                     " ranking int"
+                     " )")
+
     dbObject.dbQuery("CREATE TABLE asset_daily_allocation_table"
                      "("
                      "date date,"
@@ -81,8 +121,6 @@ if __name__ == "__main__":
                      " last_reallocation_time time,"
                      " last_state int"
                      " )")
-
-    '''
 
     query1 = "LOAD DATA INFILE 'E:/Studies/MTP/MTP Code/IndividualInfo.csv'" \
              " INTO TABLE old_tradesheet_data_table" \

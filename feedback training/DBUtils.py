@@ -10,8 +10,8 @@ class DBUtils:
     databaseObject = None
 
     def dbConnect (self):
-        db_username = 'root'
-        db_password = 'controljp'
+        db_username = gv.userName
+        db_password = gv.password
         db_host = '127.0.0.1'
         db_name = gv.databaseName
         db_port = '3306'
@@ -44,11 +44,36 @@ class DBUtils:
         #print(queryInsertTrade)
         databaseObject.Execute(queryInsertTrade)
 
-    # Function to get individuals which have active trades in a given interval
+    # Function to insert new trade in training_tradesheet
+    def insertTrainingNewTrade(self, tradeId, individualId, tradeType, entryDate, entryTime, entryPrice, entryQty, exitDate, exitTime, exitPrice):
+        global databaseObject
+        queryInsertTrade = "INSERT INTO training_tradesheet_data_table" \
+                           " (trade_id, individual_id, trade_type, entry_date, entry_time, entry_price, entry_qty, exit_date, exit_time, exit_price)" \
+                           " VALUES" \
+                           " (" + str(tradeId) + ", " + str(individualId) + ", " + str(tradeType) + ", '" + str(entryDate) + "', '" + str(entryTime) +\
+                           "', " + str(entryPrice) + ", " + str(entryQty) + ", '" + str(exitDate) + "', '" + str(exitTime) + "', " + str(exitPrice) + ")"
+        #print(queryInsertTrade)
+        databaseObject.Execute(queryInsertTrade)
+
+    # Function to get individuals which have active trades in a given interval of time on a given day
     def getIndividuals (self, startDate, startTime, endDate, endTime):
         global databaseObject
         queryIndividuals = "SELECT DISTINCT(individual_id), 1 FROM tradesheet_data_table WHERE entry_time<'" + str(endTime) + \
                            "' AND exit_time>'" + str(startTime) + "' AND entry_date='" + str(startDate) + "'"
+        return databaseObject.Execute(queryIndividuals)
+
+    # Function to get individuals which have active trades in a given interval of time on a given day during training
+    def getTrainingIndividuals (self, startDate, startTime, endDate, endTime):
+        global databaseObject
+        queryIndividuals = "SELECT DISTINCT(individual_id), 1 FROM training_tradesheet_data_table WHERE entry_time<'" + str(endTime) + \
+                           "' AND exit_time>'" + str(startTime) + "' AND entry_date='" + str(startDate) + "'"
+        return databaseObject.Execute(queryIndividuals)
+
+    # Function to get individuals from original tradesheet in a given interval of dates
+    def getRefIndividuals(self, startDate, endDate):
+        global databaseObject
+        queryIndividuals = "SELECT DISTINCT(individual_id), 1 FROM old_tradesheet_data_table WHERE entry_date>='" + str(startDate) + \
+                           "' AND entry_date<='" + str(endDate) + "'"
         return databaseObject.Execute(queryIndividuals)
 
     # Function to get all individuals from original tradesheet
@@ -73,9 +98,26 @@ class DBUtils:
         #print(queryTrades)
         return databaseObject.Execute(queryTrades)
 
+    # Function to get new trades from original tradesheet based on ranking
+    def getRankedTradesOrdered (self, date, startTime, endTime):
+        global databaseObject
+        queryTrades = "SELECT t.* FROM old_tradesheet_data_table AS t JOIN ranking_table as  r ON t.individual_id=r.individual_id" \
+                      "WHERE t.entry_date='" + str(date) + "' AND t.entry_time<'" + str(endTime) + "' AND t.entry_time>='" + str(startTime) + \
+                      "' ORDER BY t.entry_time, r.ranking"
+        #print(queryTrades)
+        return databaseObject.Execute(queryTrades)
+
+    # Function to get trades taken by an individual in an interval
     def getTradesIndividual(self, individualId, startDate, startTime, endDate, endTime):
         global databaseObject
         queryTrades = "SELECT * FROM tradesheet_data_table WHERE entry_date='" + str(startDate) + "' AND entry_time<='" + str(endTime) + \
+                      "' AND exit_time>='" + str(startTime) + "' AND individual_id=" + str(individualId)
+        return databaseObject.Execute(queryTrades)
+
+    # Function to get trades taken by an individual in an interval during training
+    def getTrainingTradesIndividual(self, individualId, startDate, startTime, endDate, endTime):
+        global databaseObject
+        queryTrades = "SELECT * FROM training_tradesheet_data_table WHERE entry_date='" + str(startDate) + "' AND entry_time<='" + str(endTime) + \
                       "' AND exit_time>='" + str(startTime) + "' AND individual_id=" + str(individualId)
         return databaseObject.Execute(queryTrades)
 
@@ -90,6 +132,20 @@ class DBUtils:
     def getTradesExitEnd(self, date, startTime, endTime):
         global databaseObject
         queryTrades = "SELECT individual_id, trade_type, entry_qty, entry_price, exit_price FROM tradesheet_data_table WHERE exit_date='" + str(date) + \
+                      "' AND exit_time>='" + str(startTime) + "'"
+        return databaseObject.Execute(queryTrades)
+
+    # Function to get trades that are to exit in a given interval during training
+    def getTrainingTradesExit(self, date, startTime, endTime):
+        global databaseObject
+        queryTrades = "SELECT individual_id, trade_type, entry_qty, entry_price, exit_price FROM training_tradesheet_data_table WHERE exit_date='" + str(date) + \
+                      "' AND exit_time>='" + str(startTime) + "' AND exit_time<'" + str(endTime) + "'"
+        return databaseObject.Execute(queryTrades)
+
+    # Function to get trades that are to exit at day end during training
+    def getTrainingTradesExitEnd(self, date, startTime, endTime):
+        global databaseObject
+        queryTrades = "SELECT individual_id, trade_type, entry_qty, entry_price, exit_price FROM training_tradesheet_data_table WHERE exit_date='" + str(date) + \
                       "' AND exit_time>='" + str(startTime) + "'"
         return databaseObject.Execute(queryTrades)
 
@@ -117,6 +173,22 @@ class DBUtils:
         for result, dummy in resultRecord:
             if result==0:
                 queryInsertMTM = "INSERT INTO mtm_table " \
+                                 "(trade_id, individual_id, trade_type, date, time, mtm) " \
+                                 "VALUES " \
+                                 "(" + str(tradeId) + ", " + str(individualId) + ", " + str(tradeType) + \
+                                 ", '" + str(entryDate) + "', '" + str(mtmTime) + "', " + str(mtm) + ")"
+                return databaseObject.Execute(queryInsertMTM)
+
+    # Function to insert MTM value in db during training
+    def insertMTM(self, individualId, tradeId, tradeType, entryDate, mtmTime, mtm):
+        global databaseObject
+        queryCheckRecord = "SELECT EXISTS (SELECT 1 FROM training_mtm_table WHERE trade_id=" + str(tradeId) + " AND date='" + str(entryDate) + \
+                           "' AND time='" + str(mtmTime) + "'), 0"
+
+        resultRecord = databaseObject.Execute(queryCheckRecord)
+        for result, dummy in resultRecord:
+            if result==0:
+                queryInsertMTM = "INSERT INTO training_mtm_table " \
                                  "(trade_id, individual_id, trade_type, date, time, mtm) " \
                                  "VALUES " \
                                  "(" + str(tradeId) + ", " + str(individualId) + ", " + str(tradeType) + \
@@ -199,16 +271,84 @@ class DBUtils:
         #print(queryQty)
         return databaseObject.Execute(queryQty)
 
+    # Function to get net MTM for all long trades during training
+    def getTrainingTotalPosMTM (self, individualId, startDate, startTime, endDate, endTime):
+        global databaseObject
+        queryMTM = "SELECT SUM(mtm), 1 FROM training_mtm_table WHERE individual_id=" + str(individualId) +\
+                   " AND time>'" + str(startTime) + "' AND date>='" + str(startDate) + \
+                   "' AND date<='" + str(endDate) + "' AND time<='" + str(endTime) + \
+                   "' AND trade_type=0"
+        #print(queryMTM)
+        return databaseObject.Execute(queryMTM)
+
+    # function to get total quantity for all long trades during training
+    def getTrainingTotalPosQty (self, individualId, startDate, startTime, endDate, endTime):
+        global databaseObject
+        queryQty = "SELECT SUM(entry_qty), 1 FROM training_tradesheet_data_table WHERE individual_id=" \
+                   + str(individualId) + " AND entry_time<'" + str(endTime) + "' AND exit_time>'" + str(startTime) + \
+                   "' AND entry_date='" + str(startDate) + "' AND trade_type=0"
+        #print(queryQty)
+        return databaseObject.Execute(queryQty)
+
+    # Function to get net MTM for all short trades during training
+    def getTrainingTotalNegMTM (self, individualId, startDate, startTime, endDate, endTime):
+        global databaseObject
+        queryMTM = "SELECT SUM(mtm), 1 FROM training_mtm_table WHERE individual_id=" + str(individualId) + \
+                   " AND time>'" + str(startTime) + "' AND date>='" + str(startDate) + \
+                   "' AND date<='" + str(endDate) + "' AND time<='" + str(endTime) + \
+                   "' AND trade_type=1"
+        #print(queryMTM)
+        return databaseObject.Execute(queryMTM)
+
+    # Function to get total quantity for all short trades during training
+    def getTrainingTotalNegQty (self, individualId, startDate, startTime, endDate, endTime):
+        global databaseObject
+        queryQty = "SELECT SUM(entry_qty), 1 FROM training_tradesheet_data_table WHERE individual_id=" \
+                   + str(individualId) + " AND entry_time<'" + str(endTime) + "' AND exit_time>'" + str(startTime) + \
+                   "' AND entry_date='" + str(startDate) + "' AND trade_type=1"
+        #print(queryQty)
+        return databaseObject.Execute(queryQty)
+
     # Function to get Q Matrix of an individual
     def getQMatrix (self, individualId):
         global databaseObject
         queryQM = "SELECT row_num, column_num, q_value FROM q_matrix_table WHERE individual_id=" + str(individualId)
         return databaseObject.Execute(queryQM)
 
+    # Function to insert / update Q matrix of an individual
+    def updateQMatrix(self, individualId, qm):
+        global databaseObject
+        queryCheck = "SELECT EXISTS (SELECT 1 FROM q_matrix_table WHERE individual_id=" + str(individualId) + "), 1"
+        resultCheck = databaseObject.Execute(queryCheck)
+        for check, dummy in resultCheck:
+            if check==1:
+                for i in range(0,3,1):
+                    for j in range(0,3,1):
+                        queryUpdate = "UPDATE q_matrix_table SET q_value=" + str(round(qm[i,j], 10)) + " WHERE individual_id=" + str(individualId) + \
+                                      " AND row_num=" + str(i) + " AND column_num=" + str(j)
+                        databaseObject.Execute(queryUpdate)
+            else:
+                for i in range(0,3,1):
+                    for j in range(0,3,1):
+                        queryInsert = "INSERT INTO q_matrix_table " \
+                                     "(individual_id, row_num, column_num, q_value)" \
+                                     " VALUES " \
+                                     "(" + str(individualId) + ", " + str(i) + ", " + str(j) + ", " + str(round(qm[i,j], 10)) + ")"
+                        databaseObject.Execute(queryInsert)
+
     # Function to insert individual entry in asset_allocation_table
     def addIndividualAsset (self, individualId, usedAsset):
         global databaseObject
         queryAddAsset = "INSERT INTO asset_allocation_table" \
+                        "(individual_id, total_asset, used_asset, free_asset)" \
+                        "VALUES" \
+                        "(" + str(individualId) + ", " + str(round(gv.maxAsset,4)) + ", " + str(round(usedAsset,4)) + ", " + str(round((gv.maxAsset-usedAsset),4)) + ")"
+        return databaseObject.Execute(queryAddAsset)
+
+    # Function to insert individual entry in training_asset_allocation_table
+    def addTrainingIndividualAsset (self, individualId, usedAsset):
+        global databaseObject
+        queryAddAsset = "INSERT INTO training_asset_allocation_table" \
                         "(individual_id, total_asset, used_asset, free_asset)" \
                         "VALUES" \
                         "(" + str(individualId) + ", " + str(round(gv.maxAsset,4)) + ", " + str(round(usedAsset,4)) + ", " + str(round((gv.maxAsset-usedAsset),4)) + ")"
@@ -220,6 +360,12 @@ class DBUtils:
         queryCheck = "SELECT EXISTS (SELECT 1 FROM asset_allocation_table WHERE individual_id=" + str(individualId) + "), 0"
         return databaseObject.Execute(queryCheck)
 
+    # Function to check if an individual's entry exists in training_asset_allocation_table
+    def checkTrainingIndividualAssetExists (self, individualId):
+        global databaseObject
+        queryCheck = "SELECT EXISTS (SELECT 1 FROM training_asset_allocation_table WHERE individual_id=" + str(individualId) + "), 0"
+        return databaseObject.Execute(queryCheck)
+
     # Function to update individual's asset
     def updateIndividualAsset(self, individualId, toBeUsedAsset):
         global databaseObject
@@ -229,6 +375,18 @@ class DBUtils:
             newUsedAsset = float(usedAsset) + toBeUsedAsset
             newFreeAsset = float(freeAsset) - toBeUsedAsset
             queryUpdate = "UPDATE asset_allocation_table SET used_asset=" + str(round(newUsedAsset,4)) + ", free_asset=" + str(round(newFreeAsset,4)) + \
+                          " WHERE individual_id=" + str(individualId)
+            return databaseObject.Execute(queryUpdate)
+
+    # Function to update individual's asset during training
+    def updateTrainingIndividualAsset(self, individualId, toBeUsedAsset):
+        global databaseObject
+        queryOldAsset = "SELECT total_asset, used_asset, free_asset FROM training_asset_allocation_table WHERE individual_id=" + str(individualId)
+        resultOldAsset = databaseObject.Execute(queryOldAsset)
+        for totalAsset, usedAsset, freeAsset in resultOldAsset:
+            newUsedAsset = float(usedAsset) + toBeUsedAsset
+            newFreeAsset = float(freeAsset) - toBeUsedAsset
+            queryUpdate = "UPDATE training_asset_allocation_table SET used_asset=" + str(round(newUsedAsset,4)) + ", free_asset=" + str(round(newFreeAsset,4)) + \
                           " WHERE individual_id=" + str(individualId)
             return databaseObject.Execute(queryUpdate)
 
@@ -338,6 +496,12 @@ class DBUtils:
         queryCheck = "SELECT free_asset, 1 FROM asset_allocation_table WHERE individual_id=" + str(individualId)
         return databaseObject.Execute(queryCheck)
 
+    # Function to get current free asset for an individual during training
+    def getTrainingFreeAsset(self, individualId):
+        global databaseObject
+        queryCheck = "SELECT free_asset, 1 FROM training_asset_allocation_table WHERE individual_id=" + str(individualId)
+        return databaseObject.Execute(queryCheck)
+
     # Function to reset asset_allocation_table at the beginning
     def resetAssetAllocation(self, date, time):
         global databaseObject
@@ -350,6 +514,10 @@ class DBUtils:
                                " (date, time, total_asset)"
                                " VALUES"
                                " ('" + str(date) + "', '" + str(time) + "', " + str(round(gv.maxTotalAsset, 4)) + ")")
+        databaseObject.Execute("INSERT INTO training_asset_allocation_table"
+                               " (individual_id, total_asset, used_asset, free_asset)"
+                               " VALUES"
+                               " (" + str(gv.dummyIndividualId) + ", " + str(round(gv.trainingMaxTotalAsset,4)) + ", 0, " + str(round(gv.trainingMaxTotalAsset,4)) + ")")
 
     # Function to insert free asset at day end into asset_daily_allocation_table
     def insertDailyAsset(self, date, time):
@@ -416,6 +584,57 @@ class DBUtils:
         queryTrades = "SELECT COUNT(*),1 FROM old_tradesheet_data_table WHERE entry_date>='" + str(startDate) + "' AND entry_date<='" + str(endDate) + \
                       "' AND trade_type=1"
         return databaseObject.Execute(queryTrades)
+
+    # Function to return Net PL for long trades per individual from original tradesheet within an interval
+    def getIndividualLongNetPL(self, startDate, endDate, individualId):
+        global databaseObject
+        queryPL = "SELECT SUM((exit_price-entry_price)*entry_qty), 1 FROM old_tradesheet_data_table WHERE entry_date>='" + str(startDate) + \
+                  "' AND entry_date<='" + str(endDate) + "' AND trade_type=0 AND individual_id=" + str(individualId)
+        return databaseObject.Execute(queryPL)
+
+    # Function to return Net PL for short trades per individual from original tradesheet within an interval
+    def getIndividualShortNetPL(self, startDate, endDate, individualId):
+        global databaseObject
+        queryPL = "SELECT SUM((entry_price-exit_price)*entry_qty), 1 FROM old_tradesheet_data_table WHERE entry_date>='" + str(startDate) + \
+                  "' AND entry_date<='" + str(endDate) + "' AND trade_type=1 AND individual_id=" + str(individualId)
+        return databaseObject.Execute(queryPL)
+
+    # Function to get Drawdown for an individual in an interval
+    def getIndividualDrawdown(self, startDate, endDate, individualId):
+        global databaseObject
+        queryDD = ""
+        return None
+
+    # Function to reset all ranks to maximum for initialization
+    def resetRanks(self):
+        global databaseObject
+        databaseObject.Execute("DELETE FROM ranking_table")
+        queryIndividuals = "SELECT DISTINCT(individual_id), 1 FROM old_tradesheet_data_table"
+        queryCount = "SELECT COUNT(DISTINCT(individual_id)), 1 FROM old_tradesheet_data_table"
+        resultCount = databaseObject.Execute(queryCount)
+        resultIndividuals = databaseObject.Execute(queryIndividuals)
+        for count, dummy in resultCount:
+            for individualId, dummy in resultIndividuals:
+                queryInsert = "INSERT INTO ranking_table" \
+                              " (individual_id, rank)" \
+                              " VALUES" \
+                              " (" + str(individualId) + ", " + str(count) + ")"
+                databaseObject.Execute(queryInsert)
+
+    # Function to update rank of an individual
+    def updateRank(self, individualId, rank):
+        global databaseObject
+        queryUpdate = "UPDATE ranking_table SET rank=" + str(rank) + " WHERE individual_id=" + str(individualId)
+        databaseObject.Execute(queryUpdate)
+    '''
+    # Function to return trades per individual from original tradesheet within an interval
+    def getIndividualTrades(self, startDate, endDate):
+        global databaseObject
+        queryTrades = "SELECT individual_id, COUNT(*) FROM old_tradesheet_data_table WHERE entry_date>='" + str(startDate) + "' AND entry_date<='"\
+                      + str(endDate) + "' GROUP BY individual_id"
+        return databaseObject.Execute(queryTrades)
+
+    '''
 
     # Function to return asset at month end
     def getAssetMonthly(self, month, year):

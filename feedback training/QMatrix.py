@@ -50,16 +50,7 @@ class QMatrix:
                 qm_old = qm.copy()
 
         # Update Q matrix for the individual in db
-        # TODO - make function for this in dbUtils
-        queryDelete = "DELETE FROM q_matrix_table WHERE individual_id=" + str(individualId)
-        dbObject.dbQuery(queryDelete)
-        for i in range(0,3,1):
-            for j in range(0,3,1):
-                queryInsertQMatrix = "INSERT INTO q_matrix_table " \
-                                     "(individual_id, row_num, column_num, q_value)" \
-                                     " VALUES " \
-                                     "(" + str(individualId) + ", " + str(i) + ", " + str(j) + ", " + str(round(qm[i,j], 10)) + ")"
-                dbObject.dbQuery(queryInsertQMatrix)
+        dbObject.updateQMatrix(individualId, qm)
 
     # Function to check similarity in 2 matrices based on squared difference between corresponding values
     def checkSimilarityMatrices(self, m1, m2):
