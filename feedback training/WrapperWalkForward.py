@@ -31,15 +31,19 @@ if __name__ == "__main__":
     liveEndDate = datetime(liveStartDate.year, liveStartDate.month, calendar.monthrange(liveStartDate.year, liveStartDate.month)[1]).date()
     periodEndDate = gv.endDate
 
-    dbObject.resetRanks()
+    #dbObject.resetRanks()
     dbObject.resetAssetAllocation(liveStartDate, startTime)
     done = False
 
     print('Started at : ' + datetime.now())
     while (not done):
+        dbObject.resetRanks()
+        dbObject.resetLatestIndividualsWalkForward()
         rankingObject.updateRankings(walkforwardStartDate, walkforwardEndDate, dbObject)
         trainingObject.train(trainingStartDate, trainingEndDate, dbObject, mtmObject, rewardMatrixObject, qMatrixObject)
         liveObject.live(liveStartDate, liveEndDate, dbObject, mtmObject, rewardMatrixObject, qMatrixObject, reallocationObject)
+        dbObject.updateQMatrixTableWalkForward()
+        dbObject.updateAssetWalkForward()
         if liveEndDate>=periodEndDate:
             done = True
         else:

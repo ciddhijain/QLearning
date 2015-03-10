@@ -6,6 +6,13 @@ if __name__ == "__main__":
     dbObject = DBUtils()
     dbObject.dbConnect()
 
+    dbObject.dbQuery("CREATE TABLE latest_individuals"
+                     " ("
+                     " individual_id int"
+                     " )")
+
+    '''
+
     dbObject.dbQuery("CREATE TABLE training_mtm_table"
                      " ("
                      " trade_id int,"
@@ -15,8 +22,6 @@ if __name__ == "__main__":
                      " time time,"
                      " mtm float"
                      " )")
-
-    '''
 
     dbObject.dbQuery("CREATE TABLE training_tradesheet_data_table"
                      " ("

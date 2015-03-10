@@ -684,3 +684,34 @@ class DBUtils:
         global databaseObject
         queryPL = "SELECT SUM((entry_price-exit_price)*entry_qty), COUNT(*), MONTH(entry_date), YEAR(entry_date) FROM old_tradesheet_data_table WHERE trade_type=1 GROUP BY YEAR(entry_date), MONTH(entry_date)"
         return databaseObject.Execute(queryPL)
+
+    # Function to delete all non-recent entries from q_matrix_table every walk-forward
+    def updateQMatrixTableWalkForward(self):
+        global databaseObject
+        queryUpdate = "DELETE FROM q_matrix_table WHERE individual_id NOT IN (SELECT individual_id FROM latest_individual_table)"
+        databaseObject.Execute(queryUpdate)
+
+    # Function to reset latest_individual_table every walk-forward
+    def resetLatestIndividualsWalkForward(self):
+        global databaseObject
+        queryReset = "DELETE FROM latest_individual_table"
+        databaseObject.Execute(queryReset)
+
+    # Function to insert individual id in latest_individual_table every walk-forward
+    def insertLatestIndividual(self, individualId):
+        global databaseObject
+        queryCheck = "SELECT EXISTS (SELECT 1 FROM latest_individual_table WHERE individual_id=" + str(individualId) + "), 0"
+        resultCheck = databaseObject.Execute(queryCheck)
+        for check, dummy in resultCheck:
+            if check==0:
+                queryInsert = "INSERT INTO latest_individual_table" \
+                              " (individual_id)" \
+                              " VALUES" \
+                              " (" + str(individualId) + ")"
+                databaseObject.Execute(queryInsert)
+
+    # Function to reset asset_allocation_table every walk-forward
+    def updateAssetWalkForward(self):
+        global databaseObject
+        queryUpdate = "DELETE FROM asset_allocation_table WHERE individual_id NOT IN (SELECT individual_id FROM latest_individual_table)"
+        databaseObject.Execute(queryUpdate)

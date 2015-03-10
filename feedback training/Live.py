@@ -48,6 +48,7 @@ class Live:
                                         print('Taking this trade. Asset used = ' + str(usedAsset))
                                         dbObject.insertNewTrade(tradeId, individualId, tradeType, entryDate, entryTime, entryPrice, entryQty, exitDate, exitTime, exitPrice)
                                         dbObject.updateIndividualAsset(gv.dummyIndividualId, usedAsset)
+                                        dbObject.insertLatestIndividual(individualId)
                                     else:
                                         print('Individual exists already')
                                         resultFreeAsset = dbObject.getFreeAsset(individualId)
@@ -57,6 +58,7 @@ class Live:
                                                 dbObject.insertNewTrade(tradeId, individualId, tradeType, entryDate, entryTime, entryPrice, entryQty, exitDate, exitTime, exitPrice)
                                                 dbObject.updateIndividualAsset(gv.dummyIndividualId, usedAsset)
                                                 dbObject.updateIndividualAsset(individualId, usedAsset)
+                                                dbObject.insertLatestIndividual(individualId)
                     resultIndividuals = dbObject.getIndividuals(date, startTime, date, endTime)
                     for individualId, dummy in resultIndividuals:
                         print('Calculating mtm')
@@ -85,6 +87,7 @@ class Live:
                                 freedAsset = qty*(2*entry_price - exit_price)*(-1)          # Short Trade
                             dbObject.updateIndividualAsset(gv.dummyIndividualId, freedAsset)
                             dbObject.updateIndividualAsset(id, freedAsset)
+                        dbObject.insertDailyAsset(date, endTime)
                         print('Checking if we have reached the end of testing period')
                         if(date>=periodEndDate):
                             done = True
