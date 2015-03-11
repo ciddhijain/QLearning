@@ -11,14 +11,10 @@ class Ranking:
         ddObject = Drawdown()
 
         # fetching performance for all individuals
-        count = 0
         for individualId, dummy1 in resultIndividuals:
             resultPM = ddObject.calculatePerformance(startDate, endDate, individualId, dbObject)
             individualList.append(individualId)
             performanceList.append(resultPM[0][1])
-            count += 1
-            if count==10:
-                break
 
         # Sorting the individuals according to performance
         individualPerformance = list(zip(individualList, performanceList))
