@@ -11,8 +11,6 @@ if __name__ == "__main__":
                      " individual_id int"
                      " )")
 
-    '''
-
     dbObject.dbQuery("CREATE TABLE training_mtm_table"
                      " ("
                      " trade_id int,"
@@ -50,7 +48,7 @@ if __name__ == "__main__":
                      " individual_id int,"
                      " ranking int"
                      " )")
-
+    '''
     dbObject.dbQuery("CREATE TABLE asset_daily_allocation_table"
                      "("
                      "date date,"
