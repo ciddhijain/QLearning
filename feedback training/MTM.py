@@ -34,11 +34,11 @@ class MTM:
                     endPrice = p
             # mtm calculation
             if tradeType==0:
-                if price & endPrice:
+                if price and endPrice:
                     mtm = (endPrice-price) * entryQty
                     dbObject.insertMTM(individualId, tradeId, tradeType, entryDate, endTime, mtm)
             else:
-                if price & endPrice:
+                if price and endPrice:
                     mtm = (price-endPrice) * entryQty
                     dbObject.insertMTM(individualId, tradeId, tradeType, entryDate, endTime, mtm)
 
@@ -71,11 +71,11 @@ class MTM:
                     endPrice = p
             # mtm calculation
             if tradeType==0:
-                if price & endPrice:
+                if price and endPrice:
                     mtm = (endPrice-price) * entryQty
                     dbObject.insertTrainingMTM(individualId, tradeId, tradeType, entryDate, endTime, mtm)
             else:
-                if price & endPrice:
+                if price and endPrice:
                     mtm = (price-endPrice) * entryQty
                     dbObject.insertTrainingMTM(individualId, tradeId, tradeType, entryDate, endTime, mtm)
 

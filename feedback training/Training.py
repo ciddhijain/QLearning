@@ -22,7 +22,7 @@ class Training:
             for checkTradingDay, dummy0 in resultTradingDay:
                 if checkTradingDay==1:
                     print('Its a trading day')
-                    resultTrades = dbObject.getTradesOrdered(date, startTime, endTime)
+                    resultTrades = dbObject.getRankedTradesOrdered(date, startTime, endTime)
                     for tradeId, individualId, tradeType, entryDate, entryTime, entryPrice, entryQty, exitDate, exitTime, exitPrice in resultTrades:
                         resultTradesExit = dbObject.getTrainingTradesExit(date, lastCheckedTime, entryTime)
                         for id, type, qty, entry_price, exit_price in resultTradesExit:

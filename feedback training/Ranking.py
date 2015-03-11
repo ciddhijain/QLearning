@@ -25,11 +25,8 @@ class Ranking:
         individualPerformance.sort(key=lambda tup: tup[1])
 
         # Updating ranks in db
-        '''
         for i in range(0, len(individualList), 1):
             dbObject.updateRank(individualPerformance[i][0], i+1)
-        '''
-
 
 if __name__ == "__main__":
     rankingObject = Ranking()

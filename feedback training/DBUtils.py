@@ -101,8 +101,8 @@ class DBUtils:
     # Function to get new trades from original tradesheet based on ranking
     def getRankedTradesOrdered (self, date, startTime, endTime):
         global databaseObject
-        queryTrades = "SELECT t.* FROM old_tradesheet_data_table AS t JOIN ranking_table as  r ON t.individual_id=r.individual_id" \
-                      "WHERE t.entry_date='" + str(date) + "' AND t.entry_time<'" + str(endTime) + "' AND t.entry_time>='" + str(startTime) + \
+        queryTrades = "SELECT t.* FROM old_tradesheet_data_table AS t JOIN ranking_table as r ON t.individual_id=r.individual_id" \
+                      " WHERE t.entry_date='" + str(date) + "' AND t.entry_time<'" + str(endTime) + "' AND t.entry_time>='" + str(startTime) + \
                       "' ORDER BY t.entry_time, r.ranking"
         #print(queryTrades)
         return databaseObject.Execute(queryTrades)
@@ -180,7 +180,7 @@ class DBUtils:
                 return databaseObject.Execute(queryInsertMTM)
 
     # Function to insert MTM value in db during training
-    def insertMTM(self, individualId, tradeId, tradeType, entryDate, mtmTime, mtm):
+    def insertTrainingMTM(self, individualId, tradeId, tradeType, entryDate, mtmTime, mtm):
         global databaseObject
         queryCheckRecord = "SELECT EXISTS (SELECT 1 FROM training_mtm_table WHERE trade_id=" + str(tradeId) + " AND date='" + str(entryDate) + \
                            "' AND time='" + str(mtmTime) + "'), 0"
@@ -606,9 +606,9 @@ class DBUtils:
         return None
 
     # Function to reset all ranks to maximum for initialization
-    def resetRanks(self):
+    def initializeRanks(self):
         global databaseObject
-        databaseObject.Execute("DELETE FROM ranking_table")
+        #databaseObject.Execute("DELETE FROM ranking_table")
         queryIndividuals = "SELECT DISTINCT(individual_id), 1 FROM old_tradesheet_data_table"
         queryCount = "SELECT COUNT(DISTINCT(individual_id)), 1 FROM old_tradesheet_data_table"
         resultCount = databaseObject.Execute(queryCount)
@@ -616,15 +616,23 @@ class DBUtils:
         for count, dummy in resultCount:
             for individualId, dummy in resultIndividuals:
                 queryInsert = "INSERT INTO ranking_table" \
-                              " (individual_id, rank)" \
+                              " (individual_id, ranking)" \
                               " VALUES" \
                               " (" + str(individualId) + ", " + str(count) + ")"
                 databaseObject.Execute(queryInsert)
 
+    def resetRanks(self):
+        global databaseObject
+        queryCount = "SELECT COUNT(DISTINCT(individual_id)), 1 FROM old_tradesheet_data_table"
+        resultCount = databaseObject.Execute(queryCount)
+        for count, dummy in resultCount:
+            queryUpdate = "UPDATE ranking_table SET ranking=" + str(count)
+            databaseObject.Execute(queryUpdate)
+
     # Function to update rank of an individual
     def updateRank(self, individualId, rank):
         global databaseObject
-        queryUpdate = "UPDATE ranking_table SET rank=" + str(rank) + " WHERE individual_id=" + str(individualId)
+        queryUpdate = "UPDATE ranking_table SET ranking=" + str(rank) + " WHERE individual_id=" + str(individualId)
         databaseObject.Execute(queryUpdate)
     '''
     # Function to return trades per individual from original tradesheet within an interval
@@ -713,5 +721,14 @@ class DBUtils:
     # Function to reset asset_allocation_table every walk-forward
     def updateAssetWalkForward(self):
         global databaseObject
-        queryUpdate = "DELETE FROM asset_allocation_table WHERE individual_id NOT IN (SELECT individual_id FROM latest_individual_table)"
+        queryUpdate = "DELETE FROM asset_allocation_table WHERE individual_id NOT IN (SELECT individual_id FROM latest_individual_table) AND individual_id<>" + str(gv.dummyIndividualId)
         databaseObject.Execute(queryUpdate)
+
+    # Function to reset training_asset_allocation_table every training period
+    def resetAssetTraining(self):
+        global databaseObject
+        databaseObject.Execute("DELETE FROM training_asset_allocation_table")
+        databaseObject.Execute("INSERT INTO training_asset_allocation_table"
+                               " (individual_id, total_asset, used_asset, free_asset)"
+                               " VALUES"
+                               " (" + str(gv.dummyIndividualId) + ", " + str(round(gv.trainingMaxTotalAsset,4)) + ", 0, " + str(round(gv.trainingMaxTotalAsset,4)) + ")")
