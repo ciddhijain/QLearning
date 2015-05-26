@@ -18,7 +18,7 @@ class Ranking:
 
         # Sorting the individuals according to performance
         individualPerformance = list(zip(individualList, performanceList))
-        individualPerformance.sort(key=lambda tup: tup[1])
+        individualPerformance.sort(key=lambda tup: -tup[1])
 
         # Updating ranks in db
         for i in range(0, len(individualList), 1):
