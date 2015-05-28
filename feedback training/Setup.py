@@ -48,7 +48,7 @@ if __name__ == "__main__":
                      " individual_id int,"
                      " ranking int"
                      " )")
-    '''
+
     dbObject.dbQuery("CREATE TABLE asset_daily_allocation_table"
                      "("
                      "date date,"
@@ -124,6 +124,7 @@ if __name__ == "__main__":
                      " last_reallocation_time time,"
                      " last_state int"
                      " )")
+    '''
 
     query1 = "LOAD DATA INFILE 'E:/Studies/MTP/MTP Code/IndividualInfo.csv'" \
              " INTO TABLE old_tradesheet_data_table" \
