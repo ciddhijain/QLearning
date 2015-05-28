@@ -12,11 +12,12 @@ class DBUtils:
     def dbConnect (self):
         db_username = gv.userName
         db_password = gv.password
-        db_host = '127.0.0.1'
+        db_host = gv.dbHost
         db_name = gv.databaseName
-        db_port = '3306'
+        db_port = gv.dbPort
+        db_connector = gv.dbConnector
         global databaseObject
-        databaseObject = DatabaseManager(db_username, db_password,db_host,db_port, db_name)
+        databaseObject = DatabaseManager(db_connector, db_username, db_password,db_host,db_port, db_name)
         databaseObject.Connect()
 
     def dbQuery (self, query):
@@ -239,7 +240,7 @@ class DBUtils:
         queryMTM = "SELECT SUM(mtm), 1 FROM mtm_table WHERE individual_id=" + str(individualId) +\
                    " AND time>'" + str(startTime) + "' AND date>='" + str(startDate) + \
                    "' AND date<='" + str(endDate) + "' AND time<='" + str(endTime) + \
-                   "' AND trade_type=0"
+                   "' AND trade_type=1"
         #print(queryMTM)
         return databaseObject.Execute(queryMTM)
 
@@ -248,7 +249,7 @@ class DBUtils:
         global databaseObject
         queryQty = "SELECT SUM(entry_qty), 1 FROM tradesheet_data_table WHERE individual_id=" \
                    + str(individualId) + " AND entry_time<'" + str(endTime) + "' AND exit_time>'" + str(startTime) + \
-                   "' AND entry_date='" + str(startDate) + "' AND trade_type=0"
+                   "' AND entry_date='" + str(startDate) + "' AND trade_type=1"
         #print(queryQty)
         return databaseObject.Execute(queryQty)
 
@@ -258,7 +259,7 @@ class DBUtils:
         queryMTM = "SELECT SUM(mtm), 1 FROM mtm_table WHERE individual_id=" + str(individualId) + \
                    " AND time>'" + str(startTime) + "' AND date>='" + str(startDate) + \
                    "' AND date<='" + str(endDate) + "' AND time<='" + str(endTime) + \
-                   "' AND trade_type=1"
+                   "' AND trade_type=0"
         #print(queryMTM)
         return databaseObject.Execute(queryMTM)
 
@@ -267,7 +268,7 @@ class DBUtils:
         global databaseObject
         queryQty = "SELECT SUM(entry_qty), 1 FROM tradesheet_data_table WHERE individual_id=" \
                    + str(individualId) + " AND entry_time<'" + str(endTime) + "' AND exit_time>'" + str(startTime) + \
-                   "' AND entry_date='" + str(startDate) + "' AND trade_type=1"
+                   "' AND entry_date='" + str(startDate) + "' AND trade_type=0"
         #print(queryQty)
         return databaseObject.Execute(queryQty)
 
@@ -277,7 +278,7 @@ class DBUtils:
         queryMTM = "SELECT SUM(mtm), 1 FROM training_mtm_table WHERE individual_id=" + str(individualId) +\
                    " AND time>'" + str(startTime) + "' AND date>='" + str(startDate) + \
                    "' AND date<='" + str(endDate) + "' AND time<='" + str(endTime) + \
-                   "' AND trade_type=0"
+                   "' AND trade_type=1"
         #print(queryMTM)
         return databaseObject.Execute(queryMTM)
 
@@ -286,7 +287,7 @@ class DBUtils:
         global databaseObject
         queryQty = "SELECT SUM(entry_qty), 1 FROM training_tradesheet_data_table WHERE individual_id=" \
                    + str(individualId) + " AND entry_time<'" + str(endTime) + "' AND exit_time>'" + str(startTime) + \
-                   "' AND entry_date='" + str(startDate) + "' AND trade_type=0"
+                   "' AND entry_date='" + str(startDate) + "' AND trade_type=1"
         #print(queryQty)
         return databaseObject.Execute(queryQty)
 
@@ -296,7 +297,7 @@ class DBUtils:
         queryMTM = "SELECT SUM(mtm), 1 FROM training_mtm_table WHERE individual_id=" + str(individualId) + \
                    " AND time>'" + str(startTime) + "' AND date>='" + str(startDate) + \
                    "' AND date<='" + str(endDate) + "' AND time<='" + str(endTime) + \
-                   "' AND trade_type=1"
+                   "' AND trade_type=0"
         #print(queryMTM)
         return databaseObject.Execute(queryMTM)
 
@@ -305,7 +306,7 @@ class DBUtils:
         global databaseObject
         queryQty = "SELECT SUM(entry_qty), 1 FROM training_tradesheet_data_table WHERE individual_id=" \
                    + str(individualId) + " AND entry_time<'" + str(endTime) + "' AND exit_time>'" + str(startTime) + \
-                   "' AND entry_date='" + str(startDate) + "' AND trade_type=1"
+                   "' AND entry_date='" + str(startDate) + "' AND trade_type=0"
         #print(queryQty)
         return databaseObject.Execute(queryQty)
 
@@ -533,70 +534,70 @@ class DBUtils:
     def getLongNetPL(self, startDate, endDate):
         global databaseObject
         queryPL = "SELECT SUM((exit_price-entry_price)*entry_qty),1 FROM tradesheet_data_table WHERE entry_date>='" + str(startDate) + \
-                  "' AND entry_date<='" + str(endDate) + "' AND trade_type=0"
+                  "' AND entry_date<='" + str(endDate) + "' AND trade_type=1"
         return databaseObject.Execute(queryPL)
 
     # Function to return Net Profit-Loss of Short trades within an interval
     def getShortNetPL(self, startDate, endDate):
         global databaseObject
         queryPL = "SELECT SUM((entry_price-exit_price)*entry_qty),1 FROM tradesheet_data_table WHERE entry_date>='" + str(startDate) + \
-                  "' AND entry_date<='" + str(endDate) + "' AND trade_type=1"
+                  "' AND entry_date<='" + str(endDate) + "' AND trade_type=0"
         return databaseObject.Execute(queryPL)
 
     # Function to return number of Long trades in an interval
     def getLongTrades(self, startDate, endDate):
         global databaseObject
         queryTrades = "SELECT COUNT(*),1 FROM tradesheet_data_table WHERE entry_date>='" + str(startDate) + "' AND entry_date<='" + str(endDate) + \
-                      "' AND trade_type=0"
+                      "' AND trade_type=1"
         return databaseObject.Execute(queryTrades)
 
     # Function to return number of Short trades in an interval
     def getShortTrades(self, startDate, endDate):
         global databaseObject
         queryTrades = "SELECT COUNT(*),1 FROM tradesheet_data_table WHERE entry_date>='" + str(startDate) + "' AND entry_date<='" + str(endDate) + \
-                      "' AND trade_type=1"
+                      "' AND trade_type=0"
         return databaseObject.Execute(queryTrades)
 
     # Function to return Net Profit-Loss of Long trades in original table within an interval
     def getRefLongNetPL(self, startDate, endDate):
         global databaseObject
         queryPL = "SELECT SUM((exit_price-entry_price)*entry_qty),1 FROM old_tradesheet_data_table WHERE entry_date>='" + str(startDate) + \
-                  "' AND entry_date<='" + str(endDate) + "' AND trade_type=0"
+                  "' AND entry_date<='" + str(endDate) + "' AND trade_type=1"
         return databaseObject.Execute(queryPL)
 
     # Function to return Net Profit-Loss of Short trades in original table within an interval
     def getRefShortNetPL(self, startDate, endDate):
         global databaseObject
         queryPL = "SELECT SUM((entry_price-exit_price)*entry_qty),1 FROM old_tradesheet_data_table WHERE entry_date>='" + str(startDate) + \
-                  "' AND entry_date<='" + str(endDate) + "' AND trade_type=1"
+                  "' AND entry_date<='" + str(endDate) + "' AND trade_type=0"
         return databaseObject.Execute(queryPL)
 
     # Function to return number of Long trades in original table within an interval
     def getRefLongTrades(self, startDate, endDate):
         global databaseObject
         queryTrades = "SELECT COUNT(*),1 FROM old_tradesheet_data_table WHERE entry_date>='" + str(startDate) + "' AND entry_date<='" + str(endDate) + \
-                      "' AND trade_type=0"
+                      "' AND trade_type=1"
         return databaseObject.Execute(queryTrades)
 
     # Function to return number of Short trades in original table within an interval
     def getRefShortTrades(self, startDate, endDate):
         global databaseObject
         queryTrades = "SELECT COUNT(*),1 FROM old_tradesheet_data_table WHERE entry_date>='" + str(startDate) + "' AND entry_date<='" + str(endDate) + \
-                      "' AND trade_type=1"
+                      "' AND trade_type=0"
         return databaseObject.Execute(queryTrades)
 
     # Function to return Net PL for long trades per individual from original tradesheet within an interval
     def getIndividualLongNetPL(self, startDate, endDate, individualId):
         global databaseObject
         queryPL = "SELECT SUM((exit_price-entry_price)*entry_qty), 1 FROM old_tradesheet_data_table WHERE entry_date>='" + str(startDate) + \
-                  "' AND entry_date<='" + str(endDate) + "' AND trade_type=0 AND individual_id=" + str(individualId)
+                  "' AND entry_date<='" + str(endDate) + "' AND trade_type=1 AND individual_id=" + str(individualId)
         return databaseObject.Execute(queryPL)
 
     # Function to return Net PL for short trades per individual from original tradesheet within an interval
     def getIndividualShortNetPL(self, startDate, endDate, individualId):
         global databaseObject
         queryPL = "SELECT SUM((entry_price-exit_price)*entry_qty), 1 FROM old_tradesheet_data_table WHERE entry_date>='" + str(startDate) + \
-                  "' AND entry_date<='" + str(endDate) + "' AND trade_type=1 AND individual_id=" + str(individualId)
+                  "' AND entry_date<='" + str(endDate) + "' AND trade_type=0 AND individual_id=" + str(individualId)
         return databaseObject.Execute(queryPL)
 
     # Function to get Drawdown for an individual in an interval
@@ -672,25 +673,25 @@ class DBUtils:
     # Function to return Long NetPL and Long trades per month
     def getNetPLLongMonthly(self):
         global databaseObject
-        queryPL = "SELECT SUM((exit_price-entry_price)*entry_qty), COUNT(*), MONTH(entry_date), YEAR(entry_date) FROM tradesheet_data_table WHERE trade_type=0 GROUP BY YEAR(entry_date), MONTH(entry_date)"
+        queryPL = "SELECT SUM((exit_price-entry_price)*entry_qty), COUNT(*), MONTH(entry_date), YEAR(entry_date) FROM tradesheet_data_table WHERE trade_type=1 GROUP BY YEAR(entry_date), MONTH(entry_date)"
         return databaseObject.Execute(queryPL)
 
     # Function to return Short NetPL and Short trades per month
     def getNetPLShortMonthly(self):
         global databaseObject
-        queryPL = "SELECT SUM((entry_price-exit_price)*entry_qty), COUNT(*), MONTH(entry_date), YEAR(entry_date) FROM tradesheet_data_table WHERE trade_type=1 GROUP BY YEAR(entry_date), MONTH(entry_date)"
+        queryPL = "SELECT SUM((entry_price-exit_price)*entry_qty), COUNT(*), MONTH(entry_date), YEAR(entry_date) FROM tradesheet_data_table WHERE trade_type=0 GROUP BY YEAR(entry_date), MONTH(entry_date)"
         return databaseObject.Execute(queryPL)
 
     # Function to return Long NetPL and Long trades per month in base tradesheet
     def getRefNetPLLongMonthly(self):
         global databaseObject
-        queryPL = "SELECT SUM((exit_price-entry_price)*entry_qty), COUNT(*), MONTH(entry_date), YEAR(entry_date) FROM old_tradesheet_data_table WHERE trade_type=0 GROUP BY YEAR(entry_date), MONTH(entry_date)"
+        queryPL = "SELECT SUM((exit_price-entry_price)*entry_qty), COUNT(*), MONTH(entry_date), YEAR(entry_date) FROM old_tradesheet_data_table WHERE trade_type=1 GROUP BY YEAR(entry_date), MONTH(entry_date)"
         return databaseObject.Execute(queryPL)
 
     # Function to return Short NetPL and Short trades per month in base tradesheet
     def getRefNetPLShortMonthly(self):
         global databaseObject
-        queryPL = "SELECT SUM((entry_price-exit_price)*entry_qty), COUNT(*), MONTH(entry_date), YEAR(entry_date) FROM old_tradesheet_data_table WHERE trade_type=1 GROUP BY YEAR(entry_date), MONTH(entry_date)"
+        queryPL = "SELECT SUM((entry_price-exit_price)*entry_qty), COUNT(*), MONTH(entry_date), YEAR(entry_date) FROM old_tradesheet_data_table WHERE trade_type=0 GROUP BY YEAR(entry_date), MONTH(entry_date)"
         return databaseObject.Execute(queryPL)
 
     # Function to delete all non-recent entries from q_matrix_table every walk-forward

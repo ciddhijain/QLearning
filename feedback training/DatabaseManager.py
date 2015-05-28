@@ -4,10 +4,10 @@ from sqlalchemy import create_engine
 
 class DatabaseManager:
 
-    def __init__(self, db_user, db_password, db_address, db_port, db_name):
+    def __init__(self, db_connector, db_user, db_password, db_address, db_port, db_name):
 
         # Create database connection
-        self.connection_string = 'mysql+mysqlconnector://'+ db_user + ':' + db_password + '@'+ db_address + ':' + db_port + '/' + db_name
+        self.connection_string = 'mysql+' + db_connector + '://'+ db_user + ':' + db_password + '@'+ db_address + ':' + db_port + '/' + db_name
 
     def Connect(self):
         engine = create_engine(self.connection_string)

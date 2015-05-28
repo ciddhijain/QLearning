@@ -28,7 +28,7 @@ class Training:
                         for id, type, qty, entry_price, exit_price in resultTradesExit:
                             print('Exiting Trades')
                             freedAsset = 0
-                            if type==0:
+                            if type==1:
                                 freedAsset = qty*exit_price*(-1)
                             else:
                                 freedAsset = qty*(2*entry_price - exit_price)*(-1)

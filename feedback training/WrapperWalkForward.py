@@ -23,7 +23,7 @@ if __name__ == "__main__":
     reallocationObject = Reallocation()
 
     dbObject.dbConnect()
-
+    '''
     dbObject.dbQuery("DELETE FROM asset_allocation_table")
     dbObject.dbQuery("DELETE FROM asset_daily_allocation_table")
     dbObject.dbQuery("DELETE FROM mtm_table")
@@ -34,7 +34,7 @@ if __name__ == "__main__":
     dbObject.dbQuery("DELETE FROM training_mtm_table")
     dbObject.dbQuery("DELETE FROM training_tradesheet_data_table")
     dbObject.dbQuery("DELETE FROM ranking_table")
-
+    '''
     walkforwardStartDate = gv.startDate
     walkforwardEndDate = datetime(walkforwardStartDate.year, walkforwardStartDate.month, calendar.monthrange(walkforwardStartDate.year, walkforwardStartDate.month)[1]).date()
     trainingStartDate = walkforwardEndDate + timedelta(days=1)

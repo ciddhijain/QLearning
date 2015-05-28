@@ -2,9 +2,13 @@ __author__ = 'Ciddhi'
 
 from datetime import timedelta, datetime
 
-databaseName = 'MKT'                            # This is database name to which connection is made
+databaseName = 'QL'                            # This is database name to which connection is made
 userName = 'root'                               # This is the user name for database connection
 password = 'controljp'                          # This is the password for database connection
+dbHost = '127.0.0.1'                            # This is host address for database connection
+dbPort = '3306'                                 # This is port for database connection
+dbConnector = 'mysqlconnector'                  # This is the connector string to be used, depending upon python package
+
 startDate = datetime(2012, 1, 2).date()         # This is the start of trading period
 endDate = datetime(2012, 12, 30).date()           # This is the end of trading period
 alpha = 0.8                         # This defines the weightage to long trades as compared to short trades while constructing reward matrix
@@ -20,4 +24,4 @@ factor = 2
 maxAsset = maxTotalAsset/factor     # This is the maximum asset an individual can use
 zeroRange = 0.001                   # This determines the spread between states 0, 1, 2
 aggregationUnit = 1
-maxThreads = 8                     # This is the4 maximum number of threads that can run concurrently
+maxThreads = 8                     # This is the maximum number of threads that can run concurrently
