@@ -9,6 +9,7 @@ from MTM import *
 from Ranking import *
 from QMatrix import *
 from PerformanceMeasures import *
+from Plots import *
 import calendar
 
 if __name__ == "__main__":
@@ -21,9 +22,11 @@ if __name__ == "__main__":
     trainingObject = Training()
     liveObject = Live()
     reallocationObject = Reallocation()
+    plotObject = Plots()
+    performanceObject = PerformanceMeasures()
 
     dbObject.dbConnect()
-    '''
+
     dbObject.dbQuery("DELETE FROM asset_allocation_table")
     dbObject.dbQuery("DELETE FROM asset_daily_allocation_table")
     dbObject.dbQuery("DELETE FROM mtm_table")
@@ -34,7 +37,7 @@ if __name__ == "__main__":
     dbObject.dbQuery("DELETE FROM training_mtm_table")
     dbObject.dbQuery("DELETE FROM training_tradesheet_data_table")
     dbObject.dbQuery("DELETE FROM ranking_table")
-    '''
+
     walkforwardStartDate = gv.startDate
     walkforwardEndDate = datetime(walkforwardStartDate.year, walkforwardStartDate.month, calendar.monthrange(walkforwardStartDate.year, walkforwardStartDate.month)[1]).date()
     trainingStartDate = walkforwardEndDate + timedelta(days=1)
@@ -79,3 +82,21 @@ if __name__ == "__main__":
             if liveEndDate>periodEndDate:
                 liveEndDate = periodEndDate
     print('Finished at : ' + str(datetime.now()))
+
+    plotObject.plotAsset(gv.startDate, gv.endDate, dbObject)
+    plotObject.plotTrades(dbObject)
+    plotObject.plotPLPerTrade(dbObject)
+    plotObject.plotPL(dbObject)
+    plotObject.plotRefTrades(dbObject)
+    plotObject.plotRefPL(dbObject)
+    plotObject.plotRefPLPerTrade(dbObject)
+
+    [performance, trades] = performanceObject.CalculateTradesheetPerformanceMeasures(gv.startDate, gv.endDate, dbObject)
+    [performanceRef, tradesRef] = performanceObject.CalculateReferenceTradesheetPerformanceMeasures(gv.startDate, gv.endDate, dbObject)
+
+    with open(gv.performanceOutfileName, 'w') as fp:
+        w = csv.writer(fp)
+        w.writerow(["original performance", "number of trades"])
+        w.writerow([performanceRef, tradesRef])
+        w.writerow(["q learning performance", "number of trades"])
+        w.writerow([performance, trades])

@@ -25,3 +25,5 @@ maxAsset = maxTotalAsset/factor     # This is the maximum asset an individual ca
 zeroRange = 0.001                   # This determines the spread between states 0, 1, 2
 aggregationUnit = 1
 maxThreads = 8                     # This is the maximum number of threads that can run concurrently
+
+performanceOutfileName = 'performance.csv'

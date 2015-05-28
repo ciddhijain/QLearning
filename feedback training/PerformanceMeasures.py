@@ -25,11 +25,7 @@ class PerformanceMeasures:
             if trades:
                 totalTrades = totalTrades + trades
         performance = netPL/totalTrades
-        print('Total trades taken : ')
-        print(totalTrades)
-        print('Performance : ')
-        print(performance)
-        return performance
+        return [performance, totalTrades]
 
     def CalculateReferenceTradesheetPerformanceMeasures(self, startDate, endDate, dbObject):
         resultLongNetPL = dbObject.getRefLongNetPL(startDate, endDate)
@@ -39,17 +35,19 @@ class PerformanceMeasures:
         netPL = 0
         totalTrades = 0
         for pl, dummy in resultLongNetPL:
-            netPL = netPL + pl
+            if pl:
+                netPL = netPL + pl
         for pl, dummy in resultShortNetPL:
-            netPL = netPL + pl
+            if pl:
+                netPL = netPL + pl
         for trades, dummy in resultLongTrades:
-            totalTrades = totalTrades + trades
+            if trades:
+                totalTrades = totalTrades + trades
         for trades, dummy in resultShortTrades:
-            totalTrades = totalTrades + trades
-        performace = netPL/totalTrades
-        print(totalTrades)
-        print(performace)
-        return performace
+            if trades:
+                totalTrades = totalTrades + trades
+        performance = netPL/totalTrades
+        return [performance, totalTrades]
 
 
 if __name__ == "__main__":

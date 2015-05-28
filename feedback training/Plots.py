@@ -45,7 +45,7 @@ class Plots:
         plt.ylabel('Asset')
         plt.title('Asset Variation in Testing Period')
         plt.legend(loc="center right", bbox_to_anchor=(1.3,0.5))
-        plt.show()
+        plt.savefig('asset.png')
 
     def plotTrades(self, dbObject):
         dates = []
@@ -64,7 +64,7 @@ class Plots:
         plt.xlabel('Month of the Year')
         plt.ylabel('Number of trades')
         plt.title('Trades per Month')
-        plt.show()
+        plt.savefig('trades_per_month.png')
 
     def plotPLPerTrade(self, dbObject):
         dates = []
@@ -96,7 +96,7 @@ class Plots:
         plt.xlabel('Month of the Year')
         plt.ylabel('NetPL per trade')
         plt.title('NetPL per trade per month')
-        plt.show()
+        plt.savefig('netpl_per_trade_per_month.png')
 
     def plotPL(self, dbObject):
         dates = []
@@ -124,7 +124,7 @@ class Plots:
         plt.xlabel('Month of the Year')
         plt.ylabel('NetPL')
         plt.title('NetPL per month')
-        plt.show()
+        plt.savefig('netpl_per_month.png')
 
     def plotRefTrades(self, dbObject):
         dates = []
@@ -143,7 +143,7 @@ class Plots:
         plt.xlabel('Month of the Year')
         plt.ylabel('Number of trades')
         plt.title('Trades per Month in base tradesheet')
-        plt.show()
+        plt.savefig('trades_per_month_base.png')
 
     def plotRefPLPerTrade(self, dbObject):
         dates = []
@@ -178,7 +178,7 @@ class Plots:
         plt.xlabel('Month of the Year')
         plt.ylabel('NetPL per trade')
         plt.title('NetPL per trade per month in base tradesheet')
-        plt.show()
+        plt.savefig('netpl_per_trade_per_month_base.png')
 
     def plotRefPL(self, dbObject):
         dates = []
@@ -206,7 +206,7 @@ class Plots:
         plt.xlabel('Month of the Year')
         plt.ylabel('NetPL')
         plt.title('NetPL per month in base tradesheet')
-        plt.show()
+        plt.savefig('netpl_per_month_base')
 
 
 if __name__ == "__main__":
@@ -216,9 +216,9 @@ if __name__ == "__main__":
     periodEndDate = datetime(2012, 12, 31).date()
     dbObject.dbConnect()
     plotObject.plotAsset(date, periodEndDate, dbObject)
-    plotObject.plotTrades(dbObject)
-    plotObject.plotPLPerTrade(dbObject)
-    plotObject.plotPL(dbObject)
+    #plotObject.plotTrades(dbObject)
+    #plotObject.plotPLPerTrade(dbObject)
+    #plotObject.plotPL(dbObject)
     #plotObject.plotRefTrades(dbObject)
     #plotObject.plotRefPL(dbObject)
     #plotObject.plotRefPLPerTrade(dbObject)
