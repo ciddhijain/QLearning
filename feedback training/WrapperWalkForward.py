@@ -46,16 +46,7 @@ if __name__ == "__main__":
     liveEndDate = datetime(liveStartDate.year, liveStartDate.month, calendar.monthrange(liveStartDate.year, liveStartDate.month)[1]).date()
     periodEndDate = gv.endDate
     startTime = timedelta(hours=9, minutes=15)
-    '''
-    walkforwardStartDate = gv.startDate
-    walkforwardEndDate = walkforwardStartDate + timedelta(days=1)
-    trainingStartDate = walkforwardEndDate + timedelta(days=1)
-    trainingEndDate = trainingStartDate + timedelta(days=1)
-    liveStartDate = trainingEndDate + timedelta(days=1)
-    liveEndDate = liveStartDate + timedelta(days=1)
-    periodEndDate = walkforwardStartDate + timedelta(days=12)
-    startTime = timedelta(hours=9, minutes=15)
-    '''
+
     dbObject.initializeRanks()
     dbObject.resetAssetAllocation(liveStartDate, startTime)
     done = False
@@ -82,6 +73,7 @@ if __name__ == "__main__":
             if liveEndDate>periodEndDate:
                 liveEndDate = periodEndDate
     print('Finished at : ' + str(datetime.now()))
+
 
     plotObject.plotAsset(gv.startDate, gv.endDate, dbObject)
     plotObject.plotTrades(dbObject)
