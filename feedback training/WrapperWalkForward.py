@@ -74,21 +74,12 @@ if __name__ == "__main__":
                 liveEndDate = periodEndDate
     print('Finished at : ' + str(datetime.now()))
 
-
-    plotObject.plotAsset(gv.startDate, gv.endDate, dbObject)
-    plotObject.plotTrades(dbObject)
-    plotObject.plotPLPerTrade(dbObject)
-    plotObject.plotPL(dbObject)
     plotObject.plotRefTrades(dbObject)
     plotObject.plotRefPL(dbObject)
     plotObject.plotRefPLPerTrade(dbObject)
-
-    [performance, trades] = performanceObject.CalculateTradesheetPerformanceMeasures(gv.startDate, gv.endDate, dbObject)
     [performanceRef, tradesRef] = performanceObject.CalculateReferenceTradesheetPerformanceMeasures(gv.startDate, gv.endDate, dbObject)
 
     with open(gv.performanceOutfileName, 'w') as fp:
         w = csv.writer(fp)
         w.writerow(["original performance", "number of trades"])
         w.writerow([performanceRef, tradesRef])
-        w.writerow(["q learning performance", "number of trades"])
-        w.writerow([performance, trades])
