@@ -76,7 +76,7 @@ class Training:
                         resultTradesExit = dbObject.getTrainingTradesExitEnd(date, lastCheckedTime, endTime)
                         for id, type, qty, entry_price, exit_price in resultTradesExit:
                             freedAsset = 0
-                            if type==0:
+                            if type==1:
                                 freedAsset = qty*exit_price*(-1)            # Long Trade
                             else:
                                 freedAsset = qty*(2*entry_price - exit_price)*(-1)          # Short Trade
