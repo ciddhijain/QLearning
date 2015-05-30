@@ -38,6 +38,17 @@ if __name__ == "__main__":
     dbObject.dbQuery("DELETE FROM training_tradesheet_data_table")
     dbObject.dbQuery("DELETE FROM ranking_table")
 
+    '''
+    walkforwardStartDate = gv.startDate
+    walkforwardEndDate = walkforwardStartDate + timedelta(days=1)
+    trainingStartDate = walkforwardEndDate + timedelta(days=1)
+    trainingEndDate = trainingStartDate + timedelta(days=1)
+    liveStartDate = trainingEndDate + timedelta(days=1)
+    liveEndDate = liveStartDate + timedelta(days=1)
+    periodEndDate = walkforwardStartDate + timedelta(days=12)
+    startTime = timedelta(hours=9, minutes=15)
+    '''
+
     walkforwardStartDate = gv.startDate
     walkforwardEndDate = datetime(walkforwardStartDate.year, walkforwardStartDate.month, calendar.monthrange(walkforwardStartDate.year, walkforwardStartDate.month)[1]).date()
     trainingStartDate = walkforwardEndDate + timedelta(days=1)

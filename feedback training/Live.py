@@ -49,6 +49,7 @@ class Live:
                                         dbObject.insertNewTrade(tradeId, individualId, tradeType, entryDate, entryTime, entryPrice, entryQty, exitDate, exitTime, exitPrice)
                                         dbObject.updateIndividualAsset(gv.dummyIndividualId, usedAsset)
                                         dbObject.insertLatestIndividual(individualId)
+                                        dbObject.addNewState(individualId, entryDate, entryTime, 1)
                                     else:
                                         print('Individual exists already')
                                         resultFreeAsset = dbObject.getFreeAsset(individualId)

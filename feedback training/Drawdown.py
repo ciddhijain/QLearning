@@ -67,7 +67,7 @@ class Drawdown:
                         total_DD=DD_Daily_Value
                 TotalTrades= total_Win_Short_Trades+total_Loss_Short_Trades+total_Win_Long_Trades+total_Loss_Long_Trades
                 if(TotalTrades==0 or total_DD==0):
-                    Performance_Measures.append((-50000,-50000, 0, -50000, -50000, 0, 0.0))
+                    Performance_Measures.append((gv.dummyPerformance,gv.dummyPerformance, 0, gv.dummyPerformance, gv.dummyPerformance, 0, 0.0))
                 else:
                     if(tmp_daily_running_pl[0]>0):
                         Gain_History.append(tmp_daily_running_pl[0])
@@ -151,7 +151,7 @@ class Drawdown:
         TotalTrades= total_Win_Short_Trades+total_Loss_Short_Trades+total_Win_Long_Trades+total_Loss_Long_Trades
 
         if(TotalTrades==0 or total_DD==0):
-            Performance_Measures.append((-50000,-50000, 0, -50000, -50000, 0, 0.0))
+            Performance_Measures.append((gv.dummyPerformance,gv.dummyPerformance, 0, gv.dummyPerformance, gv.dummyPerformance, 0, 0.0))
         else:
             #calculation of MaxGain (Similar to DD Calculation):
             if(tmp_daily_running_pl[0]>0):

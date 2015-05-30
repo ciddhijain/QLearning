@@ -22,7 +22,8 @@ class Ranking:
 
         # Updating ranks in db
         for i in range(0, len(individualList), 1):
-            dbObject.updateRank(individualPerformance[i][0], i+1)
+            if individualPerformance[i][1] != gv.dummyPerformance:
+                dbObject.updateRank(individualPerformance[i][0], i+1)
 
 if __name__ == "__main__":
     rankingObject = Ranking()
