@@ -6,7 +6,7 @@ if __name__ == "__main__":
     dbObject = DBUtils()
     dbObject.dbConnect()
 
-    dbObject.dbQuery("CREATE TABLE latest_individuals"
+    dbObject.dbQuery("CREATE TABLE latest_individual_table"
                      " ("
                      " individual_id int"
                      " )")
