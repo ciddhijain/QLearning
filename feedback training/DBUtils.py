@@ -733,3 +733,8 @@ class DBUtils:
                                " (individual_id, total_asset, used_asset, free_asset)"
                                " VALUES"
                                " (" + str(gv.dummyIndividualId) + ", " + str(round(gv.trainingMaxTotalAsset,4)) + ", 0, " + str(round(gv.trainingMaxTotalAsset,4)) + ")")
+
+    def checkQMatrix(self, individualId):
+        global databaseObject
+        query = "SELECT EXISTS( SELECT 1 FROM latest_individual_table WHERE individual_id=" + str(individualId) + " ), 1"
+        return databaseObject.Execute(query)

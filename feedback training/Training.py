@@ -59,12 +59,15 @@ class Training:
                                                 dbObject.updateTrainingIndividualAsset(individualId, usedAsset)
                     resultIndividuals = dbObject.getTrainingIndividuals(date, startTime, date, endTime)
                     for individualId, dummy in resultIndividuals:
-                        print('Calculating mtm')
-                        mtmObject.calculateTrainingMTM(individualId, gv.aggregationUnit, date, startTime, date, endTime, dbObject)
-                        print('Calculating reward matrix')
-                        rewardMatrix = rewardMatrixObject.computeTrainingRM(individualId, date, startTime, date, endTime, dbObject)
-                        print('Calculating q matrix')
-                        qMatrixObject.calculateQMatrix(rewardMatrix, individualId, dbObject)
+                        resultCheck = dbObject.checkQMatrix(individualId)
+                        for check, dummy4 in resultCheck:
+                            if check==0:
+                                print('Calculating mtm')
+                                mtmObject.calculateTrainingMTM(individualId, gv.aggregationUnit, date, startTime, date, endTime, dbObject)
+                                print('Calculating reward matrix')
+                                rewardMatrix = rewardMatrixObject.computeTrainingRM(individualId, date, startTime, date, endTime, dbObject)
+                                print('Calculating q matrix')
+                                qMatrixObject.calculateQMatrix(rewardMatrix, individualId, dbObject)
                     if endTime<dayEndTime:
                         startTime = endTime
                         endTime = endTime + timedelta(hours=gv.hourWindow)
