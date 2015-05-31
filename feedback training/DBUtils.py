@@ -736,5 +736,5 @@ class DBUtils:
 
     def checkQMatrix(self, individualId):
         global databaseObject
-        query = "SELECT EXISTS( SELECT 1 FROM q_matrix_table WHERE individual_id=" + str(individualId) + " ), 1"
+        query = "SELECT EXISTS( SELECT 1 FROM latest_individual_table WHERE individual_id=" + str(individualId) + " ), 1"
         return databaseObject.Execute(query)

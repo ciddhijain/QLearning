@@ -62,15 +62,12 @@ class Live:
                                                 dbObject.insertLatestIndividual(individualId)
                     resultIndividuals = dbObject.getIndividuals(date, startTime, date, endTime)
                     for individualId, dummy in resultIndividuals:
-                        resultCheck = dbObject.checkQMatrix(individualId)
-                        for check, dummy4 in resultCheck:
-                            if check==0:
-                                print('Calculating mtm')
-                                mtmObject.calculateMTM(individualId, gv.aggregationUnit, date, startTime, date, endTime, dbObject)
-                                print('Calculating reward matrix')
-                                rewardMatrix = rewardMatrixObject.computeRM(individualId, date, startTime, date, endTime, dbObject)
-                                print('Calculating q matrix')
-                                qMatrixObject.calculateQMatrix(rewardMatrix, individualId, dbObject)
+                        print('Calculating mtm')
+                        mtmObject.calculateMTM(individualId, gv.aggregationUnit, date, startTime, date, endTime, dbObject)
+                        print('Calculating reward matrix')
+                        rewardMatrix = rewardMatrixObject.computeRM(individualId, date, startTime, date, endTime, dbObject)
+                        print('Calculating q matrix')
+                        qMatrixObject.calculateQMatrix(rewardMatrix, individualId, dbObject)
                     print('Reallocating asset for  individuals')
                     reallocationObject.reallocate(date, startTime, date, endTime, dbObject)
 
