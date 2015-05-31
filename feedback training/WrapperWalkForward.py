@@ -37,6 +37,7 @@ if __name__ == "__main__":
     dbObject.dbQuery("DELETE FROM training_mtm_table")
     dbObject.dbQuery("DELETE FROM training_tradesheet_data_table")
     dbObject.dbQuery("DELETE FROM ranking_table")
+    dbObject.dbQuery("DELETE FROM latest_individual_table")
 
     '''
     walkforwardStartDate = gv.startDate
@@ -88,7 +89,7 @@ if __name__ == "__main__":
     plotObject.plotRefTrades(dbObject)
     plotObject.plotRefPL(dbObject)
     plotObject.plotRefPLPerTrade(dbObject)
-    [performanceRef, tradesRef] = performanceObject.CalculateReferenceTradesheetPerformanceMeasures(gv.startDate, gv.endDate, dbObject)
+    [performanceRef, tradesRef] = performanceObject.CalculateReferenceTradesheetPerformanceMeasures(liveStartDate, gv.endDate, dbObject)
 
     with open(gv.performanceOutfileName, 'w') as fp:
         w = csv.writer(fp)
