@@ -13,7 +13,10 @@ def startProcess(work):
     performanceObject = work[3]
     dbObject = DBUtils()
     dbObject.dbConnect()
+    print("Starting performance calculation for " + str(individualId))
     resultPM = performanceObject.calculatePerformance(startDate, endDate, individualId, dbObject)
+    dbObject.dbClose()
+    print("Finished performance calculation for " + str(individualId))
     return (individualId, resultPM[0][1])
 
 class Ranking:

@@ -28,6 +28,7 @@ def startProcess(work):
     rewardMatrix = rewardMatrixObject.computeTrainingRM(individualId, date, startTime, date, endTime, dbObject)
     # Calculating q matrix
     qMatrixObject.calculateQMatrix(rewardMatrix, individualId, dbObject, lock)
+    dbObject.dbClose()
     return
 
 def init(l):
