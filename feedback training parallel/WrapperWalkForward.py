@@ -11,9 +11,10 @@ from QMatrix import *
 from PerformanceMeasures import *
 from Plots import *
 import calendar
-from multiprocessing import Process, Lock
 
 if __name__ == "__main__":
+
+    logging.basicConfig(filename=gv.logFileName, level=logging.INFO, format='%(asctime)s %(message)s')
 
     dbObject = DBUtils()
     rankingObject = Ranking()
@@ -69,7 +70,7 @@ if __name__ == "__main__":
     while (not done):
         dbObject.resetLatestIndividualsWalkForward()
         dbObject.resetAssetTraining()
-        #rankingObject.updateRankings(walkforwardStartDate, walkforwardEndDate, performanceDrawdownObject, dbObject)
+        rankingObject.updateRankings(walkforwardStartDate, walkforwardEndDate, performanceDrawdownObject, dbObject)
         trainingObject.train(trainingStartDate, trainingEndDate, dbObject, mtmObject, rewardMatrixObject, qMatrixObject)
         liveObject.live(liveStartDate, liveEndDate, dbObject, mtmObject, rewardMatrixObject, qMatrixObject, reallocationObject)
         if liveEndDate>=periodEndDate:
@@ -91,9 +92,16 @@ if __name__ == "__main__":
     plotObject.plotRefTrades(dbObject)
     plotObject.plotRefPL(dbObject)
     plotObject.plotRefPLPerTrade(dbObject)
+    plotObject.plotAsset(liveStartDate, periodEndDate, dbObject)
+    plotObject.plotTrades(dbObject)
+    plotObject.plotPLPerTrade(dbObject)
+    plotObject.plotPL(dbObject)
     [performanceRef, tradesRef] = performanceObject.CalculateReferenceTradesheetPerformanceMeasures(liveStartDate, gv.endDate, dbObject)
+    [performance, trades] = performanceObject.CalculateReferenceTradesheetPerformanceMeasures(liveStartDate, gv.endDate, dbObject)
 
     with open(gv.performanceOutfileName, 'w') as fp:
         w = csv.writer(fp)
         w.writerow(["original performance", "number of trades"])
         w.writerow([performanceRef, tradesRef])
+        w.writerow(["q learning parallel performance", "number of trades"])
+        w.writerow([performance, trades])
