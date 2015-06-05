@@ -24,6 +24,7 @@ if __name__ == "__main__":
     liveObject = Live()
     reallocationObject = Reallocation()
     plotObject = Plots()
+    performanceDrawdownObject = PerformanceDrawdown()
     performanceObject = PerformanceMeasures()
 
     dbObject.dbConnect()
@@ -37,7 +38,7 @@ if __name__ == "__main__":
     dbObject.dbQuery("DELETE FROM training_asset_allocation_table")
     dbObject.dbQuery("DELETE FROM training_mtm_table")
     dbObject.dbQuery("DELETE FROM training_tradesheet_data_table")
-    dbObject.dbQuery("DELETE FROM ranking_table")
+    #dbObject.dbQuery("DELETE FROM ranking_table")
     dbObject.dbQuery("DELETE FROM latest_individual_table")
 
     '''
@@ -60,7 +61,7 @@ if __name__ == "__main__":
     periodEndDate = gv.endDate
     startTime = timedelta(hours=9, minutes=15)
 
-    dbObject.initializeRanks()
+    #dbObject.initializeRanks()
     dbObject.resetAssetAllocation(liveStartDate, startTime)
     done = False
 
@@ -68,7 +69,7 @@ if __name__ == "__main__":
     while (not done):
         dbObject.resetLatestIndividualsWalkForward()
         dbObject.resetAssetTraining()
-        rankingObject.updateRankings(walkforwardStartDate, walkforwardEndDate, performanceObject, dbObject)
+        #rankingObject.updateRankings(walkforwardStartDate, walkforwardEndDate, performanceDrawdownObject, dbObject)
         trainingObject.train(trainingStartDate, trainingEndDate, dbObject, mtmObject, rewardMatrixObject, qMatrixObject)
         liveObject.live(liveStartDate, liveEndDate, dbObject, mtmObject, rewardMatrixObject, qMatrixObject, reallocationObject)
         if liveEndDate>=periodEndDate:

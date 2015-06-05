@@ -2,10 +2,44 @@ __author__ = 'Ciddhi'
 
 from datetime import timedelta, datetime
 import GlobalVariables as gv
+from multiprocessing import Lock, Pool
+from DBUtils import *
+import logging
+
+lock = None
+
+def startProcess(work):
+    date = work[0]
+    startTime = work[1]
+    endTime = work[2]
+    individualId = work[3]
+    mtmObject = work[4]
+    rewardMatrixObject = work[5]
+    qMatrixObject = work[6]
+
+    global lock
+
+    dbObject = DBUtils()
+    dbObject.dbConnect()
+
+    # Calculating mtm
+    mtmObject.calculateTrainingMTM(individualId, date, startTime, date, endTime, dbObject, lock)
+    # Calculating reward matrix
+    rewardMatrix = rewardMatrixObject.computeTrainingRM(individualId, date, startTime, date, endTime, dbObject)
+    # Calculating q matrix
+    qMatrixObject.calculateQMatrix(rewardMatrix, individualId, dbObject, lock)
+    return
+
+def init(l):
+    global lock
+    lock = l
 
 class Training:
 
     def train(self, startDate, endDate, dbObject, mtmObject, rewardMatrixObject, qMatrixObject):
+        l = Lock()
+        pool = Pool(gv.maxProcesses, initializer=init, initargs=(l,))
+
         date = startDate
         periodEndDate = endDate
         startTime = timedelta(hours=9, minutes=15)
@@ -13,20 +47,18 @@ class Training:
         dayEndTime = timedelta(hours=15, minutes=30)
         lastCheckedTime = timedelta(hours=9, minutes=15)
         done = False
-        print('\n')
-        print('\n')
-        print('Starting Training from ' + str(date) + ' to ' + str(endDate))
+        logging.info('Starting Training from ' + str(date) + ' to ' + str(endDate))
 
         while (not done):
             resultTradingDay = dbObject.checkTradingDay(date)
             for checkTradingDay, dummy0 in resultTradingDay:
                 if checkTradingDay==1:
-                    print('Its a trading day')
+                    # Its a trading day
                     resultTrades = dbObject.getRankedTradesOrdered(date, startTime, endTime)
                     for tradeId, individualId, tradeType, entryDate, entryTime, entryPrice, entryQty, exitDate, exitTime, exitPrice in resultTrades:
                         resultTradesExit = dbObject.getTrainingTradesExit(date, lastCheckedTime, entryTime)
                         for id, type, qty, entry_price, exit_price in resultTradesExit:
-                            print('Exiting Trades')
+                            # Exiting Trades
                             freedAsset = 0
                             if type==1:
                                 freedAsset = qty*exit_price*(-1)
@@ -39,43 +71,43 @@ class Training:
                         usedAsset = entryQty*entryPrice
                         for freeAssetTotal, dummy1 in resultAvailable:
                             if float(freeAssetTotal)>=usedAsset:
-                                print('Overall asset is available')
+                                # Overall asset is available
                                 resultExists = dbObject.checkTrainingIndividualAssetExists(individualId)
                                 for exists, dummy2 in resultExists:
                                     if exists==0:
-                                        print('Individual does not exist in asset table yet. Adding it.')
+                                        # Individual does not exist in asset table yet. Adding it
                                         dbObject.addTrainingIndividualAsset(individualId, usedAsset)
-                                        print('Taking this trade. Asset used = ' + str(usedAsset))
+                                        # Taking this trade
                                         dbObject.insertTrainingNewTrade(tradeId, individualId, tradeType, entryDate, entryTime, entryPrice, entryQty, exitDate, exitTime, exitPrice)
                                         dbObject.updateTrainingIndividualAsset(gv.dummyIndividualId, usedAsset)
                                     else:
-                                        print('Individual exists already')
+                                        # Individual exists already
                                         resultFreeAsset = dbObject.getTrainingFreeAsset(individualId)
                                         for freeAsset, dummy3 in resultFreeAsset:
                                             if freeAsset>=usedAsset:
-                                                print('Individual Asset is available. Taking this trade. Asset used = ' + str(usedAsset))
+                                                # Individual Asset is available. Taking this trade
                                                 dbObject.insertTrainingNewTrade(tradeId, individualId, tradeType, entryDate, entryTime, entryPrice, entryQty, exitDate, exitTime, exitPrice)
                                                 dbObject.updateTrainingIndividualAsset(gv.dummyIndividualId, usedAsset)
                                                 dbObject.updateTrainingIndividualAsset(individualId, usedAsset)
                     resultIndividuals = dbObject.getTrainingIndividuals(date, startTime, date, endTime)
+
+                    workList = []
                     for individualId, dummy in resultIndividuals:
                         resultCheck = dbObject.checkQMatrix(individualId)
                         for check, dummy4 in resultCheck:
                             if check==0:
-                                print('Calculating mtm')
-                                mtmObject.calculateTrainingMTM(individualId, gv.aggregationUnit, date, startTime, date, endTime, dbObject)
-                                print('Calculating reward matrix')
-                                rewardMatrix = rewardMatrixObject.computeTrainingRM(individualId, date, startTime, date, endTime, dbObject)
-                                print('Calculating q matrix')
-                                qMatrixObject.calculateQMatrix(rewardMatrix, individualId, dbObject)
+                                workList.append((date, startTime, endTime, individualId, mtmObject, rewardMatrixObject, qMatrixObject))
+
+                    pool.map(startProcess, workList)
+                    pool.close()
+                    pool.join()
+
+                    # Checking if we have reached end of the day
                     if endTime<dayEndTime:
                         startTime = endTime
                         endTime = endTime + timedelta(hours=gv.hourWindow)
-                        print('Not yet done for the day : ' + str(date))
-                        print('New start time : ' + str(startTime))
-                        print('New end time : ' + str(endTime))
                     else:
-                        print('Fetching trades that are to exit by the day end')
+                        # Fetching trades that are to exit by the day end
                         resultTradesExit = dbObject.getTrainingTradesExitEnd(date, lastCheckedTime, endTime)
                         for id, type, qty, entry_price, exit_price in resultTradesExit:
                             freedAsset = 0
@@ -85,21 +117,17 @@ class Training:
                                 freedAsset = qty*(2*entry_price - exit_price)*(-1)          # Short Trade
                             dbObject.updateTrainingIndividualAsset(gv.dummyIndividualId, freedAsset)
                             dbObject.updateTrainingIndividualAsset(id, freedAsset)
-                        print('Checking if we have reached the end of testing period')
+                        # Checking if we have reached the end of testing period
                         if(date>=periodEndDate):
                             done = True
                         else:
+                            # Going to next day
                             date = date + timedelta(days=1)
                             startTime = timedelta(hours=9, minutes=15)
                             endTime = timedelta(hours=10, minutes=30)
                             lastCheckedTime = timedelta(hours=9, minutes=15)
-                            print('Going to next day')
-                            print(datetime.now())
-                            print('New day : ' + str(date))
-                            print('New start time : ' + str(startTime))
-                            print('New end time : ' + str(endTime))
                 else:
                     date = date + timedelta(days=1)
                     if(date>periodEndDate):
                         done = True
-        print('Done Training ----------------------')
+        logging.info('Done Training')

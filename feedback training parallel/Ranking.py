@@ -1,8 +1,10 @@
 __author__ = 'Ciddhi'
 
 from PerformanceDrawdown import *
-from multiprocessing import Process, Lock, Pool
+from multiprocessing import Lock, Pool
 import logging
+
+lock = None
 
 def startProcess(work):
     startDate = work[0]
@@ -11,43 +13,26 @@ def startProcess(work):
     performanceObject = work[3]
     dbObject = DBUtils()
     dbObject.dbConnect()
-    lock.acquire()
-    logging.info("Starting ranking process for individual " + str(individualId))
-    lock.release()
     resultPM = performanceObject.calculatePerformance(startDate, endDate, individualId, dbObject)
-    lock.acquire()
-    logging.info("Performance for individual id " + str(individualId) + " is " + str(resultPM[0][1]))
-    logging.info("Finished ranking process for individual " + str(individualId))
-    lock.release()
     return (individualId, resultPM[0][1])
-
-def init(l):
-    global lock
-    lock = l
-
 
 class Ranking:
 
     def updateRankings(self, startDate, endDate, performanceObject, dbObject):
-        l = Lock()
-        pool = Pool(gv.maxProcesses, initializer=init, initargs=(l,))
+        pool = Pool(gv.maxProcesses)
 
         resultIndividuals = dbObject.getRefIndividuals(startDate, endDate)
         workList = []
 
-        count = 0
         # fetching performance for all individuals
         for individualId, dummy1 in resultIndividuals:
             workList.append((startDate, endDate, individualId, performanceObject))
-            if count == 10:
-                break
-            count += 1
 
         performanceList = pool.map(startProcess, workList)
 
         pool.close()
         pool.join()
-        print(performanceList)
+        #print(performanceList)
 
         # Sorting the individuals according to performance
         performanceList.sort(key=lambda tup: -tup[1])
