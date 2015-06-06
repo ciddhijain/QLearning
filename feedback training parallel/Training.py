@@ -100,8 +100,8 @@ class Training:
                                 workList.append((date, startTime, endTime, individualId, mtmObject, rewardMatrixObject, qMatrixObject))
 
                     pool.map(startProcess, workList)
-                    pool.close()
-                    pool.join()
+                    #pool.close()
+                    #pool.join()
 
                     # Checking if we have reached end of the day
                     if endTime<dayEndTime:

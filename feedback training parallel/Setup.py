@@ -125,4 +125,10 @@ if __name__ == "__main__":
                      " last_state int"
                      " )")
 
+    dbObject.dbQuery(" CREATE TABLE IF NOT EXISTS performance_table"
+                     " ("
+                     " individual_id int,"
+                     " performance float"
+                     " )")
+
     dbObject.dbClose()

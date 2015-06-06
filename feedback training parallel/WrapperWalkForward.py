@@ -39,7 +39,8 @@ if __name__ == "__main__":
     dbObject.dbQuery("DELETE FROM training_asset_allocation_table")
     dbObject.dbQuery("DELETE FROM training_mtm_table")
     dbObject.dbQuery("DELETE FROM training_tradesheet_data_table")
-    #dbObject.dbQuery("DELETE FROM ranking_table")
+    dbObject.dbQuery("DELETE FROM ranking_table")
+    dbObject.dbQuery("DELETE FROM performance_table")
     dbObject.dbQuery("DELETE FROM latest_individual_table")
 
     '''
@@ -62,7 +63,8 @@ if __name__ == "__main__":
     periodEndDate = gv.endDate
     startTime = timedelta(hours=9, minutes=15)
 
-    #dbObject.initializeRanks()
+    dbObject.initializeRanks()
+    dbObject.initializePerformance()
     dbObject.resetAssetAllocation(liveStartDate, startTime)
     done = False
 
@@ -79,6 +81,7 @@ if __name__ == "__main__":
             dbObject.updateQMatrixTableWalkForward()
             dbObject.updateAssetWalkForward()
             dbObject.resetRanks()
+            dbObject.resetPerformance()
             walkforwardStartDate = trainingStartDate
             walkforwardEndDate = trainingEndDate
             trainingStartDate = liveStartDate

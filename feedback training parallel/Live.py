@@ -100,8 +100,8 @@ class Live:
                         workList.append((date, startTime, endTime, individualId, mtmObject, rewardMatrixObject, qMatrixObject))
 
                     pool.map(startProcess, workList)
-                    pool.close()
-                    pool.join()
+                    #pool.close()
+                    #pool.join()
 
                     # Reallocating asset for  individuals
                     reallocationObject.reallocate(date, startTime, date, endTime, dbObject)
