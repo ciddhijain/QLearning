@@ -6,12 +6,12 @@ if __name__ == "__main__":
     dbObject = DBUtils()
     dbObject.dbConnect()
 
-    dbObject.dbQuery("CREATE TABLE latest_individual_table"
+    dbObject.dbQuery("CREATE TABLE IF NOT EXISTS latest_individual_table"
                      " ("
                      " individual_id int"
                      " )")
 
-    dbObject.dbQuery("CREATE TABLE training_mtm_table"
+    dbObject.dbQuery("CREATE TABLE IF NOT EXISTS training_mtm_table"
                      " ("
                      " trade_id int,"
                      " individual_id int,"
@@ -21,7 +21,7 @@ if __name__ == "__main__":
                      " mtm float"
                      " )")
 
-    dbObject.dbQuery("CREATE TABLE training_tradesheet_data_table"
+    dbObject.dbQuery("CREATE TABLE IF NOT EXISTS training_tradesheet_data_table"
                      " ("
                      " trade_id int,"
                      " individual_id int,"
@@ -35,7 +35,7 @@ if __name__ == "__main__":
                      " exit_price float"
                      " )")
 
-    dbObject.dbQuery("CREATE TABLE training_asset_allocation_table"
+    dbObject.dbQuery("CREATE TABLE IF NOT EXISTS training_asset_allocation_table"
                      " ("
                      " individual_id int,"
                      " total_asset decimal(15,4),"
@@ -43,20 +43,20 @@ if __name__ == "__main__":
                      " free_asset decimal(15,4)"
                      " )")
 
-    dbObject.dbQuery("CREATE TABLE ranking_table"
+    dbObject.dbQuery("CREATE TABLE IF NOT EXISTS ranking_table"
                      " ("
                      " individual_id int,"
                      " ranking int"
                      " )")
 
-    dbObject.dbQuery("CREATE TABLE asset_daily_allocation_table"
+    dbObject.dbQuery("CREATE TABLE IF NOT EXISTS asset_daily_allocation_table"
                      "("
                      "date date,"
                      "time time,"
                      "total_asset decimal(15,4)"
                      ")")
 
-    dbObject.dbQuery("CREATE TABLE tradesheet_data_table"
+    dbObject.dbQuery("CREATE TABLE IF NOT EXISTS tradesheet_data_table"
                      " ("
                      " trade_id int,"
                      " individual_id int,"
@@ -70,7 +70,7 @@ if __name__ == "__main__":
                      " exit_price float"
                      " )")
 
-    dbObject.dbQuery("CREATE TABLE old_tradesheet_data_table"
+    dbObject.dbQuery("CREATE TABLE IF NOT EXISTS old_tradesheet_data_table"
                      " ("
                      " trade_id int,"
                      " individual_id int,"
@@ -84,14 +84,14 @@ if __name__ == "__main__":
                      " exit_price float"
                      " )")
 
-    dbObject.dbQuery("CREATE TABLE price_series_table"
+    dbObject.dbQuery("CREATE TABLE IF NOT EXISTS price_series_table"
                      " ("
                      " date date,"
                      " time time,"
                      " price float"
                      " )")
 
-    dbObject.dbQuery("CREATE TABLE mtm_table"
+    dbObject.dbQuery("CREATE TABLE IF NOT EXISTS mtm_table"
                      " ("
                      " trade_id int,"
                      " individual_id int,"
@@ -101,7 +101,7 @@ if __name__ == "__main__":
                      " mtm float"
                      " )")
 
-    dbObject.dbQuery("CREATE TABLE asset_allocation_table"
+    dbObject.dbQuery("CREATE TABLE IF NOT EXISTS asset_allocation_table"
                      " ("
                      " individual_id int,"
                      " total_asset decimal(15,4),"
@@ -109,7 +109,7 @@ if __name__ == "__main__":
                      " free_asset decimal(15,4)"
                      " )")
 
-    dbObject.dbQuery("CREATE TABLE q_matrix_table"
+    dbObject.dbQuery("CREATE TABLE IF NOT EXISTS q_matrix_table"
                      " ("
                      " individual_id int,"
                      " row_num int,"
@@ -117,12 +117,18 @@ if __name__ == "__main__":
                      " q_value decimal(20,10)"
                      " )")
 
-    dbObject.dbQuery("CREATE TABLE reallocation_table"
+    dbObject.dbQuery("CREATE TABLE IF NOT EXISTS reallocation_table"
                      " ("
                      " individual_id int,"
                      " last_reallocation_date date,"
                      " last_reallocation_time time,"
                      " last_state int"
+                     " )")
+
+    dbObject.dbQuery(" CREATE TABLE IF NOT EXISTS performance_table"
+                     " ("
+                     " individual_id int,"
+                     " performance float"
                      " )")
     '''
 
