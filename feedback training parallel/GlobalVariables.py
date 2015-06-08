@@ -30,3 +30,5 @@ zeroRange = 0.001                   # This determines the spread between states 
 
 maxProcesses = 4                     # This is the maximum number of threads that can run concurrently
 dummyPerformance = -50000
+
+lock = None

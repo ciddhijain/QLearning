@@ -4,8 +4,6 @@ from PerformanceDrawdown import *
 from multiprocessing import Lock, Pool
 import logging
 
-lock = None
-
 def startProcess(work):
     startDate = work[0]
     endDate = work[1]
@@ -13,25 +11,18 @@ def startProcess(work):
     performanceObject = work[3]
     dbObject = DBUtils()
     dbObject.dbConnect()
-    global lock
     print("Starting performance calculation for " + str(individualId))
     resultPM = performanceObject.calculatePerformance(startDate, endDate, individualId, dbObject)
-    lock.acquire()
+    gv.lock.acquire()
     dbObject.updatePerformance(individualId, resultPM[0][1])
-    lock.release()
+    gv.lock.release()
     dbObject.dbClose()
     print("Finished performance calculation for " + str(individualId) + ". Performance = " + str(resultPM[0][1]))
     return (individualId, resultPM[0][1])
 
-def init(l):
-    global lock
-    lock = l
-
 class Ranking:
 
-    def updateRankings(self, startDate, endDate, performanceObject, dbObject):
-        l = Lock()
-        pool = Pool(gv.maxProcesses, initializer=init, initargs=(l,))
+    def updateRankings(self, startDate, endDate, performanceObject, dbObject, pool):
 
         resultIndividuals = dbObject.getRefIndividuals(startDate, endDate)
         workList = []
@@ -41,13 +32,6 @@ class Ranking:
             workList.append((startDate, endDate, individualId, performanceObject))
 
         pool.map(startProcess, workList)
-
-        #pool.close()
-        #pool.join()
-        #print(performanceList)
-
-        # Sorting the individuals according to performance
-        #performanceList.sort(key=lambda tup: -tup[1])
 
         # Updating ranks in db
         resultPerformanceList = dbObject.getRankedIndividuals()

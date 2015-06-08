@@ -12,9 +12,15 @@ from PerformanceMeasures import *
 from Plots import *
 import calendar
 
+def init(l):
+    gv.lock = l
+
 if __name__ == "__main__":
 
     logging.basicConfig(filename=gv.logFileName, level=logging.INFO, format='%(asctime)s %(message)s')
+
+    l = Lock()
+    pool = Pool(gv.maxProcesses, initializer=init, initargs=(l,))
 
     dbObject = DBUtils()
     rankingObject = Ranking()
@@ -72,9 +78,9 @@ if __name__ == "__main__":
     while (not done):
         dbObject.resetLatestIndividualsWalkForward()
         dbObject.resetAssetTraining()
-        rankingObject.updateRankings(walkforwardStartDate, walkforwardEndDate, performanceDrawdownObject, dbObject)
-        trainingObject.train(trainingStartDate, trainingEndDate, dbObject, mtmObject, rewardMatrixObject, qMatrixObject)
-        liveObject.live(liveStartDate, liveEndDate, dbObject, mtmObject, rewardMatrixObject, qMatrixObject, reallocationObject)
+        rankingObject.updateRankings(walkforwardStartDate, walkforwardEndDate, performanceDrawdownObject, dbObject, pool)
+        trainingObject.train(trainingStartDate, trainingEndDate, dbObject, mtmObject, rewardMatrixObject, qMatrixObject, pool)
+        liveObject.live(liveStartDate, liveEndDate, dbObject, mtmObject, rewardMatrixObject, qMatrixObject, reallocationObject, pool)
         if liveEndDate>=periodEndDate:
             done = True
         else:
@@ -91,6 +97,8 @@ if __name__ == "__main__":
             if liveEndDate>periodEndDate:
                 liveEndDate = periodEndDate
     print('Finished at : ' + str(datetime.now()))
+
+    pool.close()
 
     plotObject.plotRefTrades(dbObject)
     plotObject.plotRefPL(dbObject)

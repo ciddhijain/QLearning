@@ -5,7 +5,7 @@ from datetime import timedelta
 
 class MTM:
 
-    def calculateMTM (self, individualId, startDate, startTime, endDate, endTime, dbObject, lockObject):
+    def calculateMTM (self, individualId, startDate, startTime, endDate, endTime, dbObject):
         # Query to get live trades for the individual
         resultTrades = dbObject.getTradesIndividual(individualId, startDate, startTime, endDate, endTime)
         posMtm = 0
@@ -42,20 +42,20 @@ class MTM:
                     mtm = (endPrice-price) * entryQty
                     posMtm += mtm
                     posQty += entryQty
-                    lockObject.acquire()
+                    gv.lock.acquire()
                     dbObject.insertMTM(individualId, tradeId, tradeType, entryDate, endTime, mtm)
-                    lockObject.release()
+                    gv.lock.release()
             else:
                 if price and endPrice:
                     mtm = (price-endPrice) * entryQty
                     negMtm += mtm
                     negQty += entryQty
-                    lockObject.acquire()
+                    gv.lock.acquire()
                     dbObject.insertMTM(individualId, tradeId, tradeType, entryDate, endTime, mtm)
-                    lockObject.release()
+                    gv.lock.release()
         return (posMtm, posQty, negMtm, negQty)
 
-    def calculateTrainingMTM (self, individualId, startDate, startTime, endDate, endTime, dbObject, lockObject):
+    def calculateTrainingMTM (self, individualId, startDate, startTime, endDate, endTime, dbObject):
         # Query to get live trades for the individual
         resultTrades = dbObject.getTrainingTradesIndividual(individualId, startDate, startTime, endDate, endTime)
         posMtm = 0
@@ -92,17 +92,17 @@ class MTM:
                     mtm = (endPrice-price) * entryQty
                     posMtm += mtm
                     posQty += entryQty
-                    lockObject.acquire()
+                    gv.lock.acquire()
                     dbObject.insertMTM(individualId, tradeId, tradeType, entryDate, endTime, mtm)
-                    lockObject.release()
+                    gv.lock.release()
             else:
                 if price and endPrice:
                     mtm = (price-endPrice) * entryQty
                     negMtm += mtm
                     negQty += entryQty
-                    lockObject.acquire()
+                    gv.lock.acquire()
                     dbObject.insertMTM(individualId, tradeId, tradeType, entryDate, endTime, mtm)
-                    lockObject.release()
+                    gv.lock.release()
         return (posMtm, posQty, negMtm, negQty)
 
 

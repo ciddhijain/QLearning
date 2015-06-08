@@ -6,8 +6,6 @@ from multiprocessing import Lock, Pool
 from DBUtils import *
 import logging
 
-lock = None
-
 def startProcess(work):
     date = work[0]
     startTime = work[1]
@@ -17,29 +15,21 @@ def startProcess(work):
     rewardMatrixObject = work[5]
     qMatrixObject = work[6]
 
-    global lock
-
     dbObject = DBUtils()
     dbObject.dbConnect()
 
     # Calculating mtm
-    mtmObject.calculateTrainingMTM(individualId, date, startTime, date, endTime, dbObject, lock)
+    mtmObject.calculateTrainingMTM(individualId, date, startTime, date, endTime, dbObject)
     # Calculating reward matrix
     rewardMatrix = rewardMatrixObject.computeTrainingRM(individualId, date, startTime, date, endTime, dbObject)
     # Calculating q matrix
-    qMatrixObject.calculateQMatrix(rewardMatrix, individualId, dbObject, lock)
+    qMatrixObject.calculateQMatrix(rewardMatrix, individualId, dbObject)
     dbObject.dbClose()
     return
 
-def init(l):
-    global lock
-    lock = l
-
 class Training:
 
-    def train(self, startDate, endDate, dbObject, mtmObject, rewardMatrixObject, qMatrixObject):
-        l = Lock()
-        pool = Pool(gv.maxProcesses, initializer=init, initargs=(l,))
+    def train(self, startDate, endDate, dbObject, mtmObject, rewardMatrixObject, qMatrixObject, pool):
 
         date = startDate
         periodEndDate = endDate

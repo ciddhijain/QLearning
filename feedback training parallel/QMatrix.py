@@ -8,7 +8,7 @@ from datetime import timedelta
 
 class QMatrix:
 
-    def calculateQMatrix(self, rewardMatrix, individualId, dbObject, lockObject):
+    def calculateQMatrix(self, rewardMatrix, individualId, dbObject):
         qm = np.zeros((3,3))
 
         # fetch previous value of Q Matrix if it exists. Else initialize a new matrix
@@ -49,9 +49,9 @@ class QMatrix:
                 qm_old = qm.copy()
 
         # Update Q matrix for the individual in db
-        lockObject.acquire()
+        gv.lock.acquire()
         dbObject.updateQMatrix(individualId, qm)
-        lockObject.release()
+        gv.lock.release()
 
     # Function to check similarity in 2 matrices based on squared difference between corresponding values
     def checkSimilarityMatrices(self, m1, m2):
