@@ -11,6 +11,7 @@ from QMatrix import *
 from PerformanceMeasures import *
 from Plots import *
 import calendar
+from multiprocessing import Lock, Pool
 
 def init(l):
     gv.lock = l
