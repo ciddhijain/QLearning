@@ -27,4 +27,5 @@ aggregationUnit = 1
 maxThreads = 8                     # This is the maximum number of threads that can run concurrently
 dummyPerformance = -50000
 
+performanceMonthlyOutfileName = 'performance monthly.csv'
 performanceOutfileName = 'performance.csv'

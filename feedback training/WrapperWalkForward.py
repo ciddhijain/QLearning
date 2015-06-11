@@ -57,6 +57,7 @@ if __name__ == "__main__":
     liveStartDate = trainingEndDate + timedelta(days=1)
     testingStartDate = liveStartDate
     liveEndDate = datetime(liveStartDate.year, liveStartDate.month, calendar.monthrange(liveStartDate.year, liveStartDate.month)[1]).date()
+    testingEndDate = liveEndDate
     periodEndDate = gv.endDate
     startTime = timedelta(hours=9, minutes=15)
 
@@ -92,10 +93,32 @@ if __name__ == "__main__":
     plotObject.plotRefTrades(dbObject)
     plotObject.plotRefPL(dbObject)
     plotObject.plotRefPLPerTrade(dbObject)
-
-    [performanceRef, tradesRef] = performanceObject.CalculateReferenceTradesheetPerformanceMeasures(testingStartDate, gv.endDate, dbObject)
+    plotObject.plotAsset(testingStartDate, gv.endDate, dbObject)
+    plotObject.plotTrades(dbObject)
+    plotObject.plotPL(dbObject)
+    plotObject.plotPLPerTrade(dbObject)
 
     with open(gv.performanceOutfileName, 'w') as fp:
         w = csv.writer(fp)
-        w.writerow(["original performance", "number of trades"])
-        w.writerow([performanceRef, tradesRef])
+        w.writerow(["original performance", "number of trades", "q learning performance", "number of trades"])
+        [performanceRef, tradesRef] = performanceObject.CalculateReferenceTradesheetPerformanceMeasures(testingStartDate, testingEndDate, dbObject)
+        [performance, trades] = performanceObject.CalculateTradesheetPerformanceMeasures(testingStartDate, testingEndDate, dbObject)
+        w.writerow([performanceRef, tradesRef, performance, trades])
+
+    done = False
+    with open(gv.performanceMonthlyOutfileName, 'w') as fp:
+        w = csv.writer(fp)
+        w.writerow(["original performance", "number of trades", "q learning performance", "number of trades"])
+        #w.writerow(["q learning performance", "number of trades"])
+        while not done:
+            [performanceRef, tradesRef] = performanceObject.CalculateReferenceTradesheetPerformanceMeasures(testingStartDate, testingEndDate, dbObject)
+            [performance, trades] = performanceObject.CalculateTradesheetPerformanceMeasures(testingStartDate, testingEndDate, dbObject)
+            w.writerow([performanceRef, tradesRef, performance, trades])
+            #w.writerow([performance, trades])
+            if testingEndDate>=periodEndDate:
+                done = True
+            else:
+                testingStartDate = testingEndDate + timedelta(days=1)
+                testingEndDate = datetime(testingStartDate.year, testingStartDate.month, calendar.monthrange(testingStartDate.year, testingStartDate.month)[1]).date()
+                if testingEndDate>periodEndDate:
+                    testingEndDate = periodEndDate
