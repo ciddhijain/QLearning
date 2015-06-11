@@ -600,12 +600,6 @@ class DBUtils:
                   "' AND entry_date<='" + str(endDate) + "' AND trade_type=0 AND individual_id=" + str(individualId)
         return databaseObject.Execute(queryPL)
 
-    # Function to get Drawdown for an individual in an interval
-    def getIndividualDrawdown(self, startDate, endDate, individualId):
-        global databaseObject
-        queryDD = ""
-        return None
-
     # Function to reset all ranks to maximum for initialization
     def initializeRanks(self):
         global databaseObject
@@ -622,6 +616,19 @@ class DBUtils:
                               " (" + str(individualId) + ", " + str(count) + ")"
                 databaseObject.Execute(queryInsert)
 
+    # Function to reset all performances to minimum for initialization
+    def initializePerformance(self):
+        global databaseObject
+        #databaseObject.Execute("DELETE FROM ranking_table")
+        queryIndividuals = "SELECT DISTINCT(individual_id), 1 FROM old_tradesheet_data_table"
+        resultIndividuals = databaseObject.Execute(queryIndividuals)
+        for individualId, dummy in resultIndividuals:
+            queryInsert = "INSERT INTO performance_table" \
+                          " (individual_id, performance)" \
+                          " VALUES" \
+                          " (" + str(individualId) + ", " + str(gv.dummyPerformance) + ")"
+            databaseObject.Execute(queryInsert)
+
     def resetRanks(self):
         global databaseObject
         queryCount = "SELECT COUNT(DISTINCT(individual_id)), 1 FROM old_tradesheet_data_table"
@@ -630,11 +637,28 @@ class DBUtils:
             queryUpdate = "UPDATE ranking_table SET ranking=" + str(count)
             databaseObject.Execute(queryUpdate)
 
+    def resetPerformance(self):
+        global databaseObject
+        queryUpdate = "UPDATE performance_table SET performance=" + str(gv.dummyPerformance)
+        return databaseObject.Execute(queryUpdate)
+
     # Function to update rank of an individual
     def updateRank(self, individualId, rank):
         global databaseObject
         queryUpdate = "UPDATE ranking_table SET ranking=" + str(rank) + " WHERE individual_id=" + str(individualId)
         databaseObject.Execute(queryUpdate)
+
+    # Function to update performance of an individual
+    def updatePerformance(self, individualId, performance):
+        global databaseObject
+        queryUpdate = "UPDATE performance_table SET performance=" + str(performance) + " WHERE individual_id=" + str(individualId)
+        return databaseObject.Execute(queryUpdate)
+
+    # Function to get ordered individuals from
+    def getRankedIndividuals(self):
+        global databaseObject
+        query = "SELECT individual_id, 1 FROM performance_table WHERE NOT performance=" + str(gv.dummyPerformance) + " ORDER BY performance DESC"
+        return databaseObject.Execute(query)
     '''
     # Function to return trades per individual from original tradesheet within an interval
     def getIndividualTrades(self, startDate, endDate):

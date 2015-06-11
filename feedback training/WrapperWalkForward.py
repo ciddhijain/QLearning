@@ -38,8 +38,8 @@ if __name__ == "__main__":
     dbObject.dbQuery("DELETE FROM training_tradesheet_data_table")
     dbObject.dbQuery("DELETE FROM ranking_table")
     dbObject.dbQuery("DELETE FROM latest_individual_table")
-
     '''
+
     walkforwardStartDate = gv.startDate
     walkforwardEndDate = walkforwardStartDate + timedelta(days=1)
     trainingStartDate = walkforwardEndDate + timedelta(days=1)
@@ -55,11 +55,13 @@ if __name__ == "__main__":
     trainingStartDate = walkforwardEndDate + timedelta(days=1)
     trainingEndDate = datetime(trainingStartDate.year, trainingStartDate.month, calendar.monthrange(trainingStartDate.year, trainingStartDate.month)[1]).date()
     liveStartDate = trainingEndDate + timedelta(days=1)
+    testingStartDate = liveStartDate
     liveEndDate = datetime(liveStartDate.year, liveStartDate.month, calendar.monthrange(liveStartDate.year, liveStartDate.month)[1]).date()
     periodEndDate = gv.endDate
     startTime = timedelta(hours=9, minutes=15)
 
     dbObject.initializeRanks()
+    dbObject.initializePerformance()
     dbObject.resetAssetAllocation(liveStartDate, startTime)
     done = False
 
@@ -76,6 +78,7 @@ if __name__ == "__main__":
             dbObject.updateQMatrixTableWalkForward()
             dbObject.updateAssetWalkForward()
             dbObject.resetRanks()
+            dbObject.resetPerformance()
             walkforwardStartDate = trainingStartDate
             walkforwardEndDate = trainingEndDate
             trainingStartDate = liveStartDate
@@ -89,7 +92,8 @@ if __name__ == "__main__":
     plotObject.plotRefTrades(dbObject)
     plotObject.plotRefPL(dbObject)
     plotObject.plotRefPLPerTrade(dbObject)
-    [performanceRef, tradesRef] = performanceObject.CalculateReferenceTradesheetPerformanceMeasures(liveStartDate, gv.endDate, dbObject)
+
+    [performanceRef, tradesRef] = performanceObject.CalculateReferenceTradesheetPerformanceMeasures(testingStartDate, gv.endDate, dbObject)
 
     with open(gv.performanceOutfileName, 'w') as fp:
         w = csv.writer(fp)

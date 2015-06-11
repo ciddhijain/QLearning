@@ -6,24 +6,19 @@ class Ranking:
 
     def updateRankings(self, startDate, endDate, dbObject):
         resultIndividuals = dbObject.getRefIndividuals(startDate, endDate)
-        individualList = []
-        performanceList = []
         ddObject = Drawdown()
 
         # fetching performance for all individuals
         for individualId, dummy1 in resultIndividuals:
             resultPM = ddObject.calculatePerformance(startDate, endDate, individualId, dbObject)
-            individualList.append(individualId)
-            performanceList.append(resultPM[0][1])
-
-        # Sorting the individuals according to performance
-        individualPerformance = list(zip(individualList, performanceList))
-        individualPerformance.sort(key=lambda tup: -tup[1])
+            dbObject.updatePerformance(individualId, resultPM[0][1])
 
         # Updating ranks in db
-        for i in range(0, len(individualList), 1):
-            if individualPerformance[i][1] != gv.dummyPerformance:
-                dbObject.updateRank(individualPerformance[i][0], i+1)
+        resultPerformanceList = dbObject.getRankedIndividuals()
+        count = 0
+        for individualId, dummy in resultPerformanceList:
+            dbObject.updateRank(individualId, count+1)
+            count += 1
 
 if __name__ == "__main__":
     rankingObject = Ranking()
