@@ -6,30 +6,9 @@ from multiprocessing import Lock, Pool
 from DBUtils import *
 import logging
 
-def startProcess(work):
-    date = work[0]
-    startTime = work[1]
-    endTime = work[2]
-    individualId = work[3]
-    mtmObject = work[4]
-    rewardMatrixObject = work[5]
-    qMatrixObject = work[6]
-
-    dbObject = DBUtils()
-    dbObject.dbConnect()
-
-    # Calculating mtm
-    mtmObject.calculateMTM(individualId, date, startTime, date, endTime, dbObject)
-    # Calculating reward matrix
-    rewardMatrix = rewardMatrixObject.computeRM(individualId, date, startTime, date, endTime, dbObject)
-    # Calculating q matrix
-    qMatrixObject.calculateQMatrix(rewardMatrix, individualId, dbObject)
-    dbObject.dbClose()
-    return
-
 class Live:
 
-    def live(self,  startDate, endDate, dbObject, mtmObject, rewardMatrixObject, qMatrixObject, reallocationObject, pool):
+    def live(self,  startDate, endDate, dbObject, mtmObject, rewardMatrixObject, qMatrixObject, reallocationObject):
 
         date = startDate
         periodEndDate = endDate
@@ -87,11 +66,12 @@ class Live:
                     workList = []
                     resultIndividuals = dbObject.getIndividuals(date, startTime, date, endTime)
                     for individualId, dummy in resultIndividuals:
-                        workList.append((date, startTime, endTime, individualId, mtmObject, rewardMatrixObject, qMatrixObject))
-
-                    pool.map(startProcess, workList)
-                    #pool.close()
-                    #pool.join()
+                        # Calculating mtm
+                        mtmObject.calculateMTM(individualId, date, startTime, date, endTime, dbObject)
+                        # Calculating reward matrix
+                        rewardMatrix = rewardMatrixObject.computeRM(individualId, date, startTime, date, endTime, dbObject)
+                        # Calculating q matrix
+                        qMatrixObject.calculateQMatrix(rewardMatrix, individualId, dbObject)
 
                     # Reallocating asset for  individuals
                     reallocationObject.reallocate(date, startTime, date, endTime, dbObject)

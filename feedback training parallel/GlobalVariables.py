@@ -11,12 +11,13 @@ dbConnector = 'mysqlconnector'                  # This is the connector string t
 
 logFileName = 'QLearningParallel000.log'
 performanceOutfileName = 'performance.csv'
+performanceMonthlyOutfileName = 'performance monthly.csv'
 
 startDate = datetime(2012, 1, 2).date()         # This is the start of training period
 endDate = datetime(2012, 12, 31).date()           # This is the end of training period
 
-alpha = 0.3                         # This defines the weightage to long trades as compared to short trades while constructing reward matrix
-gamma = 0.3                         # This defines the weightage of old data as compared to latest observations of reward matrix
+alpha = 0.5                         # This defines the weightage to long trades as compared to short trades while constructing reward matrix
+gamma = 0.8                         # This defines the weightage of old data as compared to latest observations of reward matrix
 maxGreedyLevel = 5
 dummyIndividualId = -1               # This is to keep a track of max total capital that is invested in the portfolio
 unitQty = 250000                    # This is the amount of each decrement in asset
@@ -26,7 +27,7 @@ trainingFactor = 2
 trainingMaxTotalAsset = maxTotalAsset*trainingFactor        # This is the total asset deployed while training
 factor = 8
 maxAsset = maxTotalAsset/factor     # This is the maximum asset an individual can use
-zeroRange = 0.001                   # This determines the spread between states 0, 1, 2
+zeroRange = 0.005                   # This determines the spread between states 0, 1, 2
 
 maxProcesses = 4                     # This is the maximum number of threads that can run concurrently
 dummyPerformance = -50000

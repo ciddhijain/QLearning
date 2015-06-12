@@ -6,30 +6,9 @@ from multiprocessing import Lock, Pool
 from DBUtils import *
 import logging
 
-def startProcess(work):
-    date = work[0]
-    startTime = work[1]
-    endTime = work[2]
-    individualId = work[3]
-    mtmObject = work[4]
-    rewardMatrixObject = work[5]
-    qMatrixObject = work[6]
-
-    dbObject = DBUtils()
-    dbObject.dbConnect()
-
-    # Calculating mtm
-    mtmObject.calculateTrainingMTM(individualId, date, startTime, date, endTime, dbObject)
-    # Calculating reward matrix
-    rewardMatrix = rewardMatrixObject.computeTrainingRM(individualId, date, startTime, date, endTime, dbObject)
-    # Calculating q matrix
-    qMatrixObject.calculateQMatrix(rewardMatrix, individualId, dbObject)
-    dbObject.dbClose()
-    return
-
 class Training:
 
-    def train(self, startDate, endDate, dbObject, mtmObject, rewardMatrixObject, qMatrixObject, pool):
+    def train(self, startDate, endDate, dbObject, mtmObject, rewardMatrixObject, qMatrixObject):
 
         date = startDate
         periodEndDate = endDate
@@ -87,11 +66,11 @@ class Training:
                         resultCheck = dbObject.checkQMatrix(individualId)
                         for check, dummy4 in resultCheck:
                             if check==0:
-                                workList.append((date, startTime, endTime, individualId, mtmObject, rewardMatrixObject, qMatrixObject))
-
-                    pool.map(startProcess, workList)
-                    #pool.close()
-                    #pool.join()
+                                mtmObject.calculateTrainingMTM(individualId, date, startTime, date, endTime, dbObject)
+                                # Calculating reward matrix
+                                rewardMatrix = rewardMatrixObject.computeTrainingRM(individualId, date, startTime, date, endTime, dbObject)
+                                # Calculating q matrix
+                                qMatrixObject.calculateQMatrix(rewardMatrix, individualId, dbObject)
 
                     # Checking if we have reached end of the day
                     if endTime<dayEndTime:

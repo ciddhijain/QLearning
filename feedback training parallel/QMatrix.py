@@ -49,9 +49,7 @@ class QMatrix:
                 qm_old = qm.copy()
 
         # Update Q matrix for the individual in db
-        gv.lock.acquire()
         dbObject.updateQMatrix(individualId, qm)
-        gv.lock.release()
 
     # Function to check similarity in 2 matrices based on squared difference between corresponding values
     def checkSimilarityMatrices(self, m1, m2):

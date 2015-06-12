@@ -42,17 +42,13 @@ class MTM:
                     mtm = (endPrice-price) * entryQty
                     posMtm += mtm
                     posQty += entryQty
-                    gv.lock.acquire()
                     dbObject.insertMTM(individualId, tradeId, tradeType, entryDate, endTime, mtm)
-                    gv.lock.release()
             else:
                 if price and endPrice:
                     mtm = (price-endPrice) * entryQty
                     negMtm += mtm
                     negQty += entryQty
-                    gv.lock.acquire()
                     dbObject.insertMTM(individualId, tradeId, tradeType, entryDate, endTime, mtm)
-                    gv.lock.release()
         return (posMtm, posQty, negMtm, negQty)
 
     def calculateTrainingMTM (self, individualId, startDate, startTime, endDate, endTime, dbObject):
@@ -92,17 +88,13 @@ class MTM:
                     mtm = (endPrice-price) * entryQty
                     posMtm += mtm
                     posQty += entryQty
-                    gv.lock.acquire()
                     dbObject.insertMTM(individualId, tradeId, tradeType, entryDate, endTime, mtm)
-                    gv.lock.release()
             else:
                 if price and endPrice:
                     mtm = (price-endPrice) * entryQty
                     negMtm += mtm
                     negQty += entryQty
-                    gv.lock.acquire()
                     dbObject.insertMTM(individualId, tradeId, tradeType, entryDate, endTime, mtm)
-                    gv.lock.release()
         return (posMtm, posQty, negMtm, negQty)
 
 

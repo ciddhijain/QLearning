@@ -49,8 +49,8 @@ if __name__ == "__main__":
     dbObject.dbQuery("DELETE FROM ranking_table")
     dbObject.dbQuery("DELETE FROM performance_table")
     dbObject.dbQuery("DELETE FROM latest_individual_table")
-
     '''
+
     walkforwardStartDate = gv.startDate
     walkforwardEndDate = walkforwardStartDate + timedelta(days=1)
     trainingStartDate = walkforwardEndDate + timedelta(days=1)
@@ -67,6 +67,8 @@ if __name__ == "__main__":
     trainingEndDate = datetime(trainingStartDate.year, trainingStartDate.month, calendar.monthrange(trainingStartDate.year, trainingStartDate.month)[1]).date()
     liveStartDate = trainingEndDate + timedelta(days=1)
     liveEndDate = datetime(liveStartDate.year, liveStartDate.month, calendar.monthrange(liveStartDate.year, liveStartDate.month)[1]).date()
+    testingStartDate = liveStartDate
+    testingEndDate = liveEndDate
     periodEndDate = gv.endDate
     startTime = timedelta(hours=9, minutes=15)
 
@@ -77,11 +79,11 @@ if __name__ == "__main__":
 
     print('Started at : ' + str(datetime.now()))
     while (not done):
-        dbObject.resetLatestIndividualsWalkForward()
         dbObject.resetAssetTraining()
         rankingObject.updateRankings(walkforwardStartDate, walkforwardEndDate, performanceDrawdownObject, dbObject, pool)
-        trainingObject.train(trainingStartDate, trainingEndDate, dbObject, mtmObject, rewardMatrixObject, qMatrixObject, pool)
-        liveObject.live(liveStartDate, liveEndDate, dbObject, mtmObject, rewardMatrixObject, qMatrixObject, reallocationObject, pool)
+        trainingObject.train(trainingStartDate, trainingEndDate, dbObject, mtmObject, rewardMatrixObject, qMatrixObject)
+        dbObject.resetLatestIndividualsWalkForward()
+        liveObject.live(liveStartDate, liveEndDate, dbObject, mtmObject, rewardMatrixObject, qMatrixObject, reallocationObject)
         if liveEndDate>=periodEndDate:
             done = True
         else:
@@ -108,8 +110,9 @@ if __name__ == "__main__":
     plotObject.plotTrades(dbObject)
     plotObject.plotPLPerTrade(dbObject)
     plotObject.plotPL(dbObject)
+
     [performanceRef, tradesRef] = performanceObject.CalculateReferenceTradesheetPerformanceMeasures(liveStartDate, gv.endDate, dbObject)
-    [performance, trades] = performanceObject.CalculateReferenceTradesheetPerformanceMeasures(liveStartDate, gv.endDate, dbObject)
+    [performance, trades] = performanceObject.CalculateTradesheetPerformanceMeasures(liveStartDate, gv.endDate, dbObject)
 
     with open(gv.performanceOutfileName, 'w') as fp:
         w = csv.writer(fp)
@@ -117,3 +120,21 @@ if __name__ == "__main__":
         w.writerow([performanceRef, tradesRef])
         w.writerow(["q learning parallel performance", "number of trades"])
         w.writerow([performance, trades])
+
+    done = False
+    with open(gv.performanceMonthlyOutfileName, 'w') as fp:
+        w = csv.writer(fp)
+        w.writerow(["original performance", "number of trades", "q learning performance", "number of trades"])
+        #w.writerow(["q learning performance", "number of trades"])
+        while not done:
+            [performanceRef, tradesRef] = performanceObject.CalculateReferenceTradesheetPerformanceMeasures(testingStartDate, testingEndDate, dbObject)
+            [performance, trades] = performanceObject.CalculateTradesheetPerformanceMeasures(testingStartDate, testingEndDate, dbObject)
+            w.writerow([performanceRef, tradesRef, performance, trades])
+            #w.writerow([performance, trades])
+            if testingEndDate>=periodEndDate:
+                done = True
+            else:
+                testingStartDate = testingEndDate + timedelta(days=1)
+                testingEndDate = datetime(testingStartDate.year, testingStartDate.month, calendar.monthrange(testingStartDate.year, testingStartDate.month)[1]).date()
+                if testingEndDate>periodEndDate:
+                    testingEndDate = periodEndDate
