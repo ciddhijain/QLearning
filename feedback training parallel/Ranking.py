@@ -11,18 +11,20 @@ def startProcess(work):
     performanceObject = work[3]
     dbObject = DBUtils()
     dbObject.dbConnect()
-    print("Starting performance calculation for " + str(individualId))
+    #print("Starting performance calculation for " + str(individualId))
     resultPM = performanceObject.calculatePerformance(startDate, endDate, individualId, dbObject)
     gv.lock.acquire()
     dbObject.updatePerformance(individualId, resultPM[0][1])
     gv.lock.release()
     dbObject.dbClose()
-    print("Finished performance calculation for " + str(individualId) + ". Performance = " + str(resultPM[0][1]))
+    #print("Finished performance calculation for " + str(individualId) + ". Performance = " + str(resultPM[0][1]))
     return (individualId, resultPM[0][1])
 
 class Ranking:
 
     def updateRankings(self, startDate, endDate, performanceObject, dbObject, pool):
+
+        logging.info("Updating ranks for all individuals from " + str(startDate) + " to " + str(endDate))
 
         resultIndividuals = dbObject.getRefIndividuals(startDate, endDate)
         workList = []
@@ -40,11 +42,7 @@ class Ranking:
             dbObject.updateRank(individualId, count+1)
             count += 1
 
-        '''
-        for i in range(0, len(performanceList), 1):
-            if performanceList[i][1] != gv.dummyPerformance:
-                dbObject.updateRank(performanceList[i][0], i+1)
-        '''
+        logging.info("Done Ranking")
 
 
 if __name__ == "__main__":
