@@ -68,10 +68,10 @@ if __name__ == "__main__":
 
     print('Started at : ' + str(datetime.now()))
     while (not done):
-        dbObject.resetLatestIndividualsWalkForward()
         dbObject.resetAssetTraining()
         rankingObject.updateRankings(walkforwardStartDate, walkforwardEndDate, dbObject)
         trainingObject.train(trainingStartDate, trainingEndDate, dbObject, mtmObject, rewardMatrixObject, qMatrixObject)
+        dbObject.resetLatestIndividualsWalkForward()
         liveObject.live(liveStartDate, liveEndDate, dbObject, mtmObject, rewardMatrixObject, qMatrixObject, reallocationObject)
         if liveEndDate>=periodEndDate:
             done = True
