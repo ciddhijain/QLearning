@@ -63,7 +63,7 @@ class Training:
                         for check, dummy4 in resultCheck:
                             if check==0:
                                 print('Calculating mtm')
-                                mtmObject.calculateTrainingMTM(individualId, gv.aggregationUnit, date, startTime, date, endTime, dbObject)
+                                mtmObject.calculateTrainingMTM(individualId, date, startTime, date, endTime, dbObject)
                                 print('Calculating reward matrix')
                                 rewardMatrix = rewardMatrixObject.computeTrainingRM(individualId, date, startTime, date, endTime, dbObject)
                                 print('Calculating q matrix')

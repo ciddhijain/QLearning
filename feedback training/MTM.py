@@ -5,7 +5,7 @@ from datetime import timedelta
 
 class MTM:
 
-    def calculateMTM (self, individualId, aggregationUnit, startDate, startTime, endDate, endTime, dbObject):
+    def calculateMTM (self, individualId, startDate, startTime, endDate, endTime, dbObject):
         # Query to get live trades for the individual
         resultTrades = dbObject.getTradesIndividual(individualId, startDate, startTime, endDate, endTime)
         for tradeId, individualId, tradeType, entryDate, entryTime, entryPrice, entryQty, exitDate, exitTime, exitPrice in resultTrades:
@@ -42,7 +42,7 @@ class MTM:
                     mtm = (price-endPrice) * entryQty
                     dbObject.insertMTM(individualId, tradeId, tradeType, entryDate, endTime, mtm)
 
-    def calculateTrainingMTM (self, individualId, aggregationUnit, startDate, startTime, endDate, endTime, dbObject):
+    def calculateTrainingMTM (self, individualId, startDate, startTime, endDate, endTime, dbObject):
         # Query to get live trades for the individual
         resultTrades = dbObject.getTrainingTradesIndividual(individualId, startDate, startTime, endDate, endTime)
         for tradeId, individualId, tradeType, entryDate, entryTime, entryPrice, entryQty, exitDate, exitTime, exitPrice in resultTrades:

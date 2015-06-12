@@ -63,7 +63,7 @@ class Live:
                     resultIndividuals = dbObject.getIndividuals(date, startTime, date, endTime)
                     for individualId, dummy in resultIndividuals:
                         print('Calculating mtm')
-                        mtmObject.calculateMTM(individualId, gv.aggregationUnit, date, startTime, date, endTime, dbObject)
+                        mtmObject.calculateMTM(individualId, date, startTime, date, endTime, dbObject)
                         print('Calculating reward matrix')
                         rewardMatrix = rewardMatrixObject.computeRM(individualId, date, startTime, date, endTime, dbObject)
                         print('Calculating q matrix')
