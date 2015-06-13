@@ -11,9 +11,11 @@ class QMatrix:
     gamma = None
     maxGreedyLevel = None
 
-    def __init__(self, gamma, greedyLevel):
-        self.gamma = gamma
-        self.maxGreedyLevel = greedyLevel
+    def __init__(self, gamma_local, greedyLevel_local):
+        global gamma
+        global maxGreedyLevel
+        gamma = gamma_local
+        maxGreedyLevel = greedyLevel_local
 
     def calculateQMatrix(self, rewardMatrix, individualId, dbObject):
         global gamma

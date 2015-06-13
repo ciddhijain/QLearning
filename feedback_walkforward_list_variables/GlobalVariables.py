@@ -2,7 +2,7 @@ __author__ = 'Ciddhi'
 
 from datetime import timedelta, datetime
 
-databaseName = 'QL_AXIS'                            # This is database name to which connection is made
+databaseName = 'QL_DEBUG'                            # This is database name to which connection is made
 userName = 'root'                               # This is the user name for database connection
 password = 'controljp'                          # This is the password for database connection
 dbHost = '127.0.0.1'                            # This is host address for database connection
@@ -28,9 +28,6 @@ hourWindow = 1                      # This is the window after which re-allocati
 maxTotalAsset = 10000000            # This is the total asset deployed
 trainingFactor = 2
 trainingMaxTotalAsset = maxTotalAsset*trainingFactor        # This is the total asset deployed while training
-
-maxAsset = maxTotalAsset/individualFactor     # This is the maximum asset an individual can use
-
 
 dummyPerformance = -50000
 

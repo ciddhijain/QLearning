@@ -9,8 +9,9 @@ class RewardMatrix:
 
     alpha = None
 
-    def __init__(self, alpha):
-        self.alpha = alpha
+    def __init__(self, alpha_local):
+        global alpha
+        alpha = alpha_local
 
     def computeRM (self, mtmList):
 

@@ -10,30 +10,40 @@ class Setup:
     zeroRange = None
     greedyLevel = None
 
-    def __init__(self, alpha, gamma, individualFactor, zeroRange, greedyLevel):
-        self.alpha = alpha
-        self.gamma = gamma
-        self.individualFactor = individualFactor
-        self.zeroRange = zeroRange
-        self.greedyLevel = greedyLevel
+    def __init__(self, alpha_local, gamma_local, individualFactor_local, zeroRange_local, greedyLevel_local):
+        global alpha
+        global gamma
+        global individualFactor
+        global zeroRange
+        global greedyLevel
+        alpha = alpha_local
+        gamma = gamma_local
+        individualFactor = individualFactor_local
+        zeroRange = zeroRange_local
+        greedyLevel = greedyLevel_local
 
-    def createQLearningTables(self, dbObject):
+    def createQLearningTables(self):
         global alpha
         global gamma
         global individualFactor
         global zeroRange
         global greedyLevel
 
-        latestIndividualTable = gv.latestIndividualTableBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel)
-        trainingTradesheetTable = gv.trainingTradesheetTableBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel)
-        trainingAssetTable = gv.trainingAssetTableBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel)
-        rankingTable = gv.rankingTableBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel)
-        dailyAssetTable = gv.dailyAssetTableBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel)
-        newTradesheetTable = gv.newTradesheetTableBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel)
-        assetTable = gv.assetTableBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel)
-        qMatrixTable = gv.qMatrixTableBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel)
-        reallocationTable = gv.reallocationTableBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel)
-        performanceTable = gv.performanceTableBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel)
+        dbObject = DBUtils()
+        dbObject.dbConnect()
+
+        variableString = "_a_" + str(alpha).replace('.', '_') + "_g_" + str(gamma).replace('.', '_') + "_f_" + str(individualFactor).replace('.', '_') + "_r_" + str(zeroRange).replace('.', '_') + "_l_" + str(greedyLevel).replace('.', '_')
+
+        latestIndividualTable = gv.latestIndividualTableBase + variableString
+        trainingTradesheetTable = gv.trainingTradesheetTableBase + variableString
+        trainingAssetTable = gv.trainingAssetTableBase + variableString
+        rankingTable = gv.rankingTableBase + variableString
+        dailyAssetTable = gv.dailyAssetTableBase + variableString
+        newTradesheetTable = gv.newTradesheetTableBase + variableString
+        assetTable = gv.assetTableBase + variableString
+        qMatrixTable = gv.qMatrixTableBase + variableString
+        reallocationTable = gv.reallocationTableBase + variableString
+        performanceTable = gv.performanceTableBase + variableString
 
         dbObject.dbQuery("CREATE TABLE IF NOT EXISTS " + latestIndividualTable +
                          " ("
@@ -119,5 +129,6 @@ class Setup:
                          " performance float"
                          " )")
 
-        #return [latestIndividualTable, trainingTradesheetTable, trainingAssetTable, rankingTable, performanceTable, qMatrixTable, reallocationTable, assetTable, dailyAssetTable, newTradesheetTable]
-        return
+        dbObject.dbClose()
+
+        return [variableString, latestIndividualTable, trainingTradesheetTable, trainingAssetTable, rankingTable, performanceTable, qMatrixTable, reallocationTable, assetTable, dailyAssetTable, newTradesheetTable]

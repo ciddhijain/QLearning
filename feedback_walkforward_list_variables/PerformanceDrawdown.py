@@ -7,7 +7,7 @@ from DBUtils import *
 #dbObject = DBUtils()
 #dbObject.dbConnect()
 
-class Drawdown:
+class PerformanceDrawdown:
 
     def calculatePerformance(self, startDate, endDate, individualId, dbObject):
         resultDates = dbObject.dbQuery("SELECT DISTINCT(date), 1 FROM price_series_table WHERE date >= '" + str(startDate)+

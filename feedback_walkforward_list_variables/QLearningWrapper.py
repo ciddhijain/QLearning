@@ -9,6 +9,7 @@ from MTM import *
 from Ranking import *
 from QMatrix import *
 from PerformanceMeasures import *
+from PerformanceDrawdown import *
 from Plots import *
 from Setup import *
 import calendar
@@ -18,7 +19,9 @@ class QLearningWrapper:
     def feedback(self, alpha, gamma, individualFactor, zeroRange, greedyLevel):
 
         setupObject = Setup(alpha, gamma, individualFactor, zeroRange, greedyLevel)
-        dbObject = DBUtils(alpha, gamma, individualFactor, zeroRange, greedyLevel)
+        [variableString, latestIndividualTable, trainingTradesheetTable, trainingAssetTable, rankingTable, performanceTable, qMatrixTable, reallocationTable, assetTable, dailyAssetTable, newTradesheetTable] = setupObject.createQLearningTables()
+
+        dbObject = DBUtils(alpha, gamma, individualFactor, zeroRange, greedyLevel, latestIndividualTable, trainingTradesheetTable, trainingAssetTable, rankingTable, performanceTable, qMatrixTable, reallocationTable, assetTable, dailyAssetTable, newTradesheetTable)
         rankingObject = Ranking()
         mtmObject = MTM()
         rewardMatrixObject = RewardMatrix(alpha)
@@ -28,22 +31,22 @@ class QLearningWrapper:
         reallocationObject = Reallocation()
         plotObject = Plots()
         performanceObject = PerformanceMeasures()
-        performanceOutfileName = gv.performanceOutfileNameBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel)
-        performanceMonthlyOutfileName = gv.performanceMonthlyOutfileNameBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel)
+        performanceDrawdownObject = PerformanceDrawdown()
+        performanceOutfileName = gv.performanceOutfileNameBase + variableString
+        performanceMonthlyOutfileName = gv.performanceMonthlyOutfileNameBase + variableString
 
         dbObject.dbConnect()
-        setupObject.createQLearningTables(dbObject)
 
-        dbObject.dbQuery("DELETE FROM " + gv.assetTableBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel))
-        dbObject.dbQuery("DELETE FROM " + gv.dailyAssetTableBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel))
-        dbObject.dbQuery("DELETE FROM " + gv.newTradesheetTableBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel))
-        dbObject.dbQuery("DELETE FROM " + gv.reallocationTableBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel))
-        dbObject.dbQuery("DELETE FROM " + gv.qMatrixTableBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel))
-        dbObject.dbQuery("DELETE FROM " + gv.trainingAssetTableBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel))
-        dbObject.dbQuery("DELETE FROM " + gv.trainingTradesheetTableBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel))
-        dbObject.dbQuery("DELETE FROM " + gv.rankingTableBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel))
-        dbObject.dbQuery("DELETE FROM " + gv.latestIndividualTableBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel))
-        '''
+        dbObject.dbQuery("DELETE FROM " + assetTable)
+        dbObject.dbQuery("DELETE FROM " + dailyAssetTable)
+        dbObject.dbQuery("DELETE FROM " + newTradesheetTable)
+        dbObject.dbQuery("DELETE FROM " + reallocationTable)
+        dbObject.dbQuery("DELETE FROM " + qMatrixTable)
+        dbObject.dbQuery("DELETE FROM " + trainingAssetTable)
+        dbObject.dbQuery("DELETE FROM " + trainingTradesheetTable)
+        dbObject.dbQuery("DELETE FROM " + rankingTable)
+        dbObject.dbQuery("DELETE FROM " + latestIndividualTable)
+        dbObject.dbQuery("DELETE FROM " + performanceTable)
 
         walkforwardStartDate = gv.startDate
         walkforwardEndDate = walkforwardStartDate + timedelta(days=1)
@@ -51,7 +54,9 @@ class QLearningWrapper:
         trainingEndDate = trainingStartDate + timedelta(days=1)
         liveStartDate = trainingEndDate + timedelta(days=1)
         liveEndDate = liveStartDate + timedelta(days=1)
-        periodEndDate = walkforwardStartDate + timedelta(days=12)
+        periodEndDate = walkforwardStartDate + timedelta(days=7)
+        testingStartDate = liveStartDate
+        testingEndDate = liveEndDate
         startTime = timedelta(hours=9, minutes=15)
         '''
 
@@ -65,6 +70,7 @@ class QLearningWrapper:
         testingEndDate = liveEndDate
         periodEndDate = gv.endDate
         startTime = timedelta(hours=9, minutes=15)
+        '''
 
         dbObject.initializeRanks()
         dbObject.initializePerformance()
@@ -74,7 +80,7 @@ class QLearningWrapper:
         print('Started at : ' + str(datetime.now()))
         while (not done):
             dbObject.resetAssetTraining()
-            rankingObject.updateRankings(walkforwardStartDate, walkforwardEndDate, dbObject)
+            rankingObject.updateRankings(walkforwardStartDate, walkforwardEndDate, dbObject, performanceDrawdownObject)
             trainingObject.train(trainingStartDate, trainingEndDate, dbObject, mtmObject, rewardMatrixObject, qMatrixObject)
             dbObject.resetLatestIndividualsWalkForward()
             liveObject.live(liveStartDate, liveEndDate, dbObject, mtmObject, rewardMatrixObject, qMatrixObject, reallocationObject)
@@ -106,8 +112,8 @@ class QLearningWrapper:
         with open(performanceOutfileName, 'w') as fp:
             w = csv.writer(fp)
             w.writerow(["original performance", "number of trades", "q learning performance", "number of trades"])
-            [performanceRef, tradesRef] = performanceObject.CalculateReferenceTradesheetPerformanceMeasures(testingStartDate, testingEndDate, dbObject)
-            [performance, trades] = performanceObject.CalculateTradesheetPerformanceMeasures(testingStartDate, testingEndDate, dbObject)
+            [performanceRef, tradesRef] = performanceObject.CalculateReferenceTradesheetPerformanceMeasures(testingStartDate, periodEndDate, dbObject)
+            [performance, trades] = performanceObject.CalculateTradesheetPerformanceMeasures(testingStartDate, periodEndDate, dbObject)
             w.writerow([performanceRef, tradesRef, performance, trades])
 
         done = False
@@ -127,3 +133,4 @@ class QLearningWrapper:
                     testingEndDate = datetime(testingStartDate.year, testingStartDate.month, calendar.monthrange(testingStartDate.year, testingStartDate.month)[1]).date()
                     if testingEndDate>periodEndDate:
                         testingEndDate = periodEndDate
+        dbObject.dbClose()

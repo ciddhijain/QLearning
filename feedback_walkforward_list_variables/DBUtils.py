@@ -25,23 +25,42 @@ class DBUtils:
     reallocationTable = None
     performanceTable = None
 
-    def __init__(self, alpha=0, gamma=0, individualFactor=0, zeroRange=0, greedyLevel=0):
-        self.alpha = alpha
-        self.gamma = gamma
-        self.individualFactor = individualFactor
-        self.zeroRange = zeroRange
-        self.greedyLevel = greedyLevel
-        self.individualMaxAsset = gv.maxTotalAsset / individualFactor
-        self.latestIndividualTable = gv.latestIndividualTableBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel)
-        self.trainingTradesheetTable = gv.trainingTradesheetTableBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel)
-        self.trainingAssetTable = gv.trainingAssetTableBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel)
-        self.rankingTable = gv.rankingTableBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel)
-        self.dailyAssetTable = gv.dailyAssetTableBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel)
-        self.newTradesheetTable = gv.newTradesheetTableBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel)
-        self.assetTable = gv.assetTableBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel)
-        self.qMatrixTable = gv.qMatrixTableBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel)
-        self.reallocationTable = gv.reallocationTableBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel)
-        self.performanceTable = gv.performanceTableBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel)
+    def __init__(self, alpha_local=0, gamma_local=0, individualFactor_local=1, zeroRange_local=0, greedyLevel_local=0,
+                 latestIndividualTable_local="", trainingTradesheetTable_local="", trainingAssetTable_local="", rankingTable_local="", performanceTable_local="",
+                 qMatrixTable_local="", reallocationTable_local="", assetTable_local="", dailyAssetTable_local="", newTradesheetTable_local=""):
+        global alpha
+        global gamma
+        global individualFactor
+        global zeroRange
+        global greedyLevel
+        global individualMaxAsset
+        global latestIndividualTable
+        global trainingAssetTable
+        global trainingTradesheetTable
+        global rankingTable
+        global dailyAssetTable
+        global newTradesheetTable
+        global assetTable
+        global qMatrixTable
+        global reallocationTable
+        global performanceTable
+
+        alpha = alpha_local
+        gamma = gamma_local
+        individualFactor = individualFactor_local
+        zeroRange = zeroRange_local
+        greedyLevel = greedyLevel_local
+        individualMaxAsset = gv.maxTotalAsset / individualFactor
+        latestIndividualTable = latestIndividualTable_local
+        trainingTradesheetTable = trainingTradesheetTable_local
+        trainingAssetTable = trainingAssetTable_local
+        rankingTable = rankingTable_local
+        dailyAssetTable = dailyAssetTable_local
+        newTradesheetTable = newTradesheetTable_local
+        assetTable = assetTable_local
+        qMatrixTable = qMatrixTable_local
+        reallocationTable = reallocationTable_local
+        performanceTable = performanceTable_local
 
     def dbConnect (self):
         db_username = gv.userName
