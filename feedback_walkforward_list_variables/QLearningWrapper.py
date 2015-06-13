@@ -14,6 +14,7 @@ from Setup import *
 import calendar
 
 class QLearningWrapper:
+
     def feedback(self, alpha, gamma, individualFactor, zeroRange, greedyLevel):
 
         setupObject = Setup(alpha, gamma, individualFactor, zeroRange, greedyLevel)
@@ -27,23 +28,21 @@ class QLearningWrapper:
         reallocationObject = Reallocation()
         plotObject = Plots()
         performanceObject = PerformanceMeasures()
-        performanceOutfileName = gv.performanceOutfileNameBase + "_" + str(alpha) + "_" + str(gamma) + "_" + str(individualFactor) + "_" + str(zeroRange) + "_" + str(greedyLevel)
-        performanceMonthlyOutfileName = gv.performanceMonthlyOutfileNameBase + "_" + str(alpha) + "_" + str(gamma) + "_" + str(individualFactor) + "_" + str(zeroRange) + "_" + str(greedyLevel)
+        performanceOutfileName = gv.performanceOutfileNameBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel)
+        performanceMonthlyOutfileName = gv.performanceMonthlyOutfileNameBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel)
 
         dbObject.dbConnect()
-        setupObject.createTables(dbObject)
+        setupObject.createQLearningTables(dbObject)
 
-        dbObject.dbQuery("DELETE FROM asset_allocation_table")
-        dbObject.dbQuery("DELETE FROM asset_daily_allocation_table")
-        dbObject.dbQuery("DELETE FROM mtm_table")
-        dbObject.dbQuery("DELETE FROM tradesheet_data_table")
-        dbObject.dbQuery("DELETE FROM reallocation_table")
-        dbObject.dbQuery("DELETE FROM q_matrix_table")
-        dbObject.dbQuery("DELETE FROM training_asset_allocation_table")
-        dbObject.dbQuery("DELETE FROM training_mtm_table")
-        dbObject.dbQuery("DELETE FROM training_tradesheet_data_table")
-        dbObject.dbQuery("DELETE FROM ranking_table")
-        dbObject.dbQuery("DELETE FROM latest_individual_table")
+        dbObject.dbQuery("DELETE FROM " + gv.assetTableBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel))
+        dbObject.dbQuery("DELETE FROM " + gv.dailyAssetTableBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel))
+        dbObject.dbQuery("DELETE FROM " + gv.newTradesheetTableBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel))
+        dbObject.dbQuery("DELETE FROM " + gv.reallocationTableBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel))
+        dbObject.dbQuery("DELETE FROM " + gv.qMatrixTableBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel))
+        dbObject.dbQuery("DELETE FROM " + gv.trainingAssetTableBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel))
+        dbObject.dbQuery("DELETE FROM " + gv.trainingTradesheetTableBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel))
+        dbObject.dbQuery("DELETE FROM " + gv.rankingTableBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel))
+        dbObject.dbQuery("DELETE FROM " + gv.latestIndividualTableBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel))
         '''
 
         walkforwardStartDate = gv.startDate

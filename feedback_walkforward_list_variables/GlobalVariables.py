@@ -12,20 +12,26 @@ dbConnector = 'mysqlconnector'                  # This is the connector string t
 startDate = datetime(2012, 1, 2).date()         # This is the start of training period
 endDate = datetime(2012, 12, 31).date()           # This is the end of training period
 
-alpha = 0.5                         # This defines the weightage to long trades as compared to short trades while constructing reward matrix
-gamma = 0.75                         # This defines the weightage of old data as compared to latest observations of reward matrix
-maxGreedyLevel = 10
+#-----------------------------------------------------------------------------------------------------------------------------------------
+# These variables need to contain list values
+alpha = [0.2, 0.4, 0.5, 0.6, 0.8]                         # This defines the weightage to long trades as compared to short trades while constructing reward matrix
+gamma = [0.3, 0.4, 0.5, 0.6, 0.7, 0.8]                         # This defines the weightage of old data as compared to latest observations of reward matrix
+maxGreedyLevel = [5, 10, 15]                 # This defines the number of future states for which reward is to be maximized in construction of q matrix
+individualFactor = [8, 10, 12]               # This defines the factor of total asset which is to be allocated to each strategy
+zeroRange = [0.002, 0.004, 0.006, 0.008, 0.01]                   # This determines the spread between states 0, 1, 2
+
+#------------------------------------------------------------------------------------------------------------------------------------------
+
 dummyIndividualId = -1               # This is to keep a track of max total capital that is invested in the portfolio
 unitQty = 250000                    # This is the amount of each decrement in asset
 hourWindow = 1                      # This is the window after which re-allocation is done
 maxTotalAsset = 10000000            # This is the total asset deployed
 trainingFactor = 2
 trainingMaxTotalAsset = maxTotalAsset*trainingFactor        # This is the total asset deployed while training
-factor = 10
-maxAsset = maxTotalAsset/factor     # This is the maximum asset an individual can use
-zeroRange = 0.005                   # This determines the spread between states 0, 1, 2
 
-maxProcesses = 2                     # This is the maximum number of threads that can run concurrently
+maxAsset = maxTotalAsset/individualFactor     # This is the maximum asset an individual can use
+
+
 dummyPerformance = -50000
 
 performanceMonthlyOutfileNameBase = 'performance monthly.csv'

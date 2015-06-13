@@ -17,23 +17,23 @@ class Setup:
         self.zeroRange = zeroRange
         self.greedyLevel = greedyLevel
 
-    def createTables(self, dbObject):
+    def createQLearningTables(self, dbObject):
         global alpha
         global gamma
         global individualFactor
         global zeroRange
         global greedyLevel
 
-        latestIndividualTable = gv.latestIndividualTableBase + "_" + str(alpha) + "_" + str(gamma) + "_" + str(individualFactor) + "_" + str(zeroRange) + "_" + str(greedyLevel)
-        trainingTradesheetTable = gv.trainingTradesheetTableBase + "_" + str(alpha) + "_" + str(gamma) + "_" + str(individualFactor) + "_" + str(zeroRange) + "_" + str(greedyLevel)
-        trainingAssetTable = gv.trainingAssetTableBase + "_" + str(alpha) + "_" + str(gamma) + "_" + str(individualFactor) + "_" + str(zeroRange) + "_" + str(greedyLevel)
-        rankingTable = gv.rankingTableBase + "_" + str(alpha) + "_" + str(gamma) + "_" + str(individualFactor) + "_" + str(zeroRange) + "_" + str(greedyLevel)
-        dailyAssetTable = gv.dailyAssetTableBase + "_" + str(alpha) + "_" + str(gamma) + "_" + str(individualFactor) + "_" + str(zeroRange) + "_" + str(greedyLevel)
-        newTradesheetTable = gv.newTradesheetTableBase + "_" + str(alpha) + "_" + str(gamma) + "_" + str(individualFactor) + "_" + str(zeroRange) + "_" + str(greedyLevel)
-        assetTable = gv.assetTableBase + "_" + str(alpha) + "_" + str(gamma) + "_" + str(individualFactor) + "_" + str(zeroRange) + "_" + str(greedyLevel)
-        qMatrixTable = gv.qMatrixTableBase + "_" + str(alpha) + "_" + str(gamma) + "_" + str(individualFactor) + "_" + str(zeroRange) + "_" + str(greedyLevel)
-        reallocationTable = gv.reallocationTableBase + "_" + str(alpha) + "_" + str(gamma) + "_" + str(individualFactor) + "_" + str(zeroRange) + "_" + str(greedyLevel)
-        performanceTable = gv.performanceTableBase + "_" + str(alpha) + "_" + str(gamma) + "_" + str(individualFactor) + "_" + str(zeroRange) + "_" + str(greedyLevel)
+        latestIndividualTable = gv.latestIndividualTableBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel)
+        trainingTradesheetTable = gv.trainingTradesheetTableBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel)
+        trainingAssetTable = gv.trainingAssetTableBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel)
+        rankingTable = gv.rankingTableBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel)
+        dailyAssetTable = gv.dailyAssetTableBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel)
+        newTradesheetTable = gv.newTradesheetTableBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel)
+        assetTable = gv.assetTableBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel)
+        qMatrixTable = gv.qMatrixTableBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel)
+        reallocationTable = gv.reallocationTableBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel)
+        performanceTable = gv.performanceTableBase + "_alpha_" + str(alpha) + "_gamma_" + str(gamma) + "_factor_" + str(individualFactor) + "_range_" + str(zeroRange) + "_level_" + str(greedyLevel)
 
         dbObject.dbQuery("CREATE TABLE IF NOT EXISTS " + latestIndividualTable +
                          " ("
@@ -87,27 +87,6 @@ class Setup:
                          " exit_date date,"
                          " exit_time time,"
                          " exit_price float"
-                         " )")
-
-        dbObject.dbQuery("CREATE TABLE IF NOT EXISTS old_tradesheet_data_table"
-                         " ("
-                         " trade_id int,"
-                         " individual_id int,"
-                         " trade_type int,"
-                         " entry_date date,"
-                         " entry_time time,"
-                         " entry_price float,"
-                         " entry_qty int,"
-                         " exit_date date,"
-                         " exit_time time,"
-                         " exit_price float"
-                         " )")
-
-        dbObject.dbQuery("CREATE TABLE IF NOT EXISTS price_series_table"
-                         " ("
-                         " date date,"
-                         " time time,"
-                         " price float"
                          " )")
 
         dbObject.dbQuery("CREATE TABLE IF NOT EXISTS " + assetTable +
