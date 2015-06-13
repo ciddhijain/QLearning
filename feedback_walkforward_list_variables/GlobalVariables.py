@@ -12,6 +12,8 @@ dbConnector = 'mysqlconnector'                  # This is the connector string t
 startDate = datetime(2012, 1, 2).date()         # This is the start of training period
 endDate = datetime(2012, 12, 31).date()           # This is the end of training period
 
+logFileName = "QLearning.log"
+
 #-----------------------------------------------------------------------------------------------------------------------------------------
 # These variables need to contain list values
 alpha = [0.2, 0.4, 0.5, 0.6, 0.8]                         # This defines the weightage to long trades as compared to short trades while constructing reward matrix

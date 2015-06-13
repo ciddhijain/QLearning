@@ -77,7 +77,6 @@ class QLearningWrapper:
         dbObject.resetAssetAllocation(liveStartDate, startTime)
         done = False
 
-        print('Started at : ' + str(datetime.now()))
         while (not done):
             dbObject.resetAssetTraining()
             rankingObject.updateRankings(walkforwardStartDate, walkforwardEndDate, dbObject, performanceDrawdownObject)
@@ -99,7 +98,6 @@ class QLearningWrapper:
                 liveEndDate = datetime(liveStartDate.year, liveStartDate.month, calendar.monthrange(liveStartDate.year, liveStartDate.month)[1]).date()
                 if liveEndDate>periodEndDate:
                     liveEndDate = periodEndDate
-        print('Finished at : ' + str(datetime.now()))
 
         plotObject.plotRefTrades(dbObject)
         plotObject.plotRefPL(dbObject)
