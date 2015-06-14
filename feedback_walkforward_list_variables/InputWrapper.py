@@ -33,5 +33,6 @@ if __name__ == "__main__":
                         logging.info("individual factor = " + str(individualFactor))
                         logging.info("zero range = " + str(zeroRange))
                         logging.info("greedy level = " + str(greedyLevel))
+                        logging.info("\n")
                         qLearningObject.feedback(alpha, gamma, individualFactor, zeroRange, greedyLevel)
                         print("\n")
