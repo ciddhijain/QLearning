@@ -48,38 +48,26 @@ class QLearningWrapper:
         dbObject.dbQuery("DELETE FROM " + latestIndividualTable)
         dbObject.dbQuery("DELETE FROM " + performanceTable)
 
-        walkforwardStartDate = gv.startDate
-        walkforwardEndDate = walkforwardStartDate + timedelta(days=1)
-        trainingStartDate = walkforwardEndDate + timedelta(days=1)
-        trainingEndDate = trainingStartDate + timedelta(days=1)
-        liveStartDate = trainingEndDate + timedelta(days=1)
-        liveEndDate = liveStartDate + timedelta(days=1)
-        periodEndDate = walkforwardStartDate + timedelta(days=7)
-        testingStartDate = liveStartDate
-        testingEndDate = liveEndDate
-        startTime = timedelta(hours=9, minutes=15)
-        '''
-
-        walkforwardStartDate = gv.startDate
-        walkforwardEndDate = datetime(walkforwardStartDate.year, walkforwardStartDate.month, calendar.monthrange(walkforwardStartDate.year, walkforwardStartDate.month)[1]).date()
-        trainingStartDate = walkforwardEndDate + timedelta(days=1)
-        trainingEndDate = datetime(trainingStartDate.year, trainingStartDate.month, calendar.monthrange(trainingStartDate.year, trainingStartDate.month)[1]).date()
+        rankingStartDate = gv.startDate
+        rankingEndDate = rankingStartDate + timedelta(days=gv.rankingDays)
+        trainingStartDate = rankingEndDate + timedelta(days=1)
+        trainingEndDate = trainingStartDate + timedelta(days=gv.initializationDays)
         liveStartDate = trainingEndDate + timedelta(days=1)
         testingStartDate = liveStartDate
-        liveEndDate = datetime(liveStartDate.year, liveStartDate.month, calendar.monthrange(liveStartDate.year, liveStartDate.month)[1]).date()
+        liveEndDate = liveStartDate + timedelta(days=gv.liveDays)
         testingEndDate = liveEndDate
         periodEndDate = gv.endDate
         startTime = timedelta(hours=9, minutes=15)
-        '''
 
         dbObject.initializeRanks()
         dbObject.initializePerformance()
         dbObject.resetAssetAllocation(liveStartDate, startTime)
+
         done = False
 
         while (not done):
             dbObject.resetAssetTraining()
-            rankingObject.updateRankings(walkforwardStartDate, walkforwardEndDate, dbObject, performanceDrawdownObject)
+            rankingObject.updateRankings(rankingStartDate, rankingEndDate, dbObject, performanceDrawdownObject)
             trainingObject.train(trainingStartDate, trainingEndDate, dbObject, mtmObject, rewardMatrixObject, qMatrixObject)
             dbObject.resetLatestIndividualsWalkForward()
             liveObject.live(liveStartDate, liveEndDate, dbObject, mtmObject, rewardMatrixObject, qMatrixObject, reallocationObject)
@@ -90,12 +78,12 @@ class QLearningWrapper:
                 dbObject.updateAssetWalkForward()
                 dbObject.resetRanks()
                 dbObject.resetPerformance()
-                walkforwardStartDate = trainingStartDate
-                walkforwardEndDate = trainingEndDate
-                trainingStartDate = liveStartDate
                 trainingEndDate = liveEndDate
-                liveStartDate = trainingEndDate + timedelta(days=1)
-                liveEndDate = datetime(liveStartDate.year, liveStartDate.month, calendar.monthrange(liveStartDate.year, liveStartDate.month)[1]).date()
+                trainingStartDate = trainingEndDate - timedelta(days=gv.initializationDays)
+                rankingEndDate = trainingStartDate - timedelta(days=1)
+                rankingStartDate = rankingEndDate - timedelta(days=gv.rankingDays)
+                liveStartDate = liveEndDate + timedelta(days=1)
+                liveEndDate = liveStartDate + timedelta(days=gv.liveDays)
                 if liveEndDate>periodEndDate:
                     liveEndDate = periodEndDate
 

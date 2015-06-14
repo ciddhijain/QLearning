@@ -10,7 +10,10 @@ dbPort = '3306'                                 # This is port for database conn
 dbConnector = 'mysqlconnector'                  # This is the connector string to be used, depending upon python package
 
 startDate = datetime(2012, 1, 2).date()         # This is the start of training period
-endDate = datetime(2012, 12, 31).date()           # This is the end of training period
+endDate = datetime(2012, 12, 31).date()         # This is the end of training period
+rankingDays = 30                                # This is the number of days for which ranking is done
+initializationDays = 30                         # This is the number of days for which q_matrix is initilaized
+liveDays = 30                                   # This is the number of days for which live trading is done
 
 logFileName = "QLearning.log"
 
