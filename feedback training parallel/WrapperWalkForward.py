@@ -106,13 +106,13 @@ if __name__ == "__main__":
     plotObject.plotRefTrades(dbObject)
     plotObject.plotRefPL(dbObject)
     plotObject.plotRefPLPerTrade(dbObject)
-    plotObject.plotAsset(liveStartDate, periodEndDate, dbObject)
+    plotObject.plotAsset(testingStartDate, periodEndDate, dbObject)
     plotObject.plotTrades(dbObject)
     plotObject.plotPLPerTrade(dbObject)
     plotObject.plotPL(dbObject)
 
-    [performanceRef, tradesRef] = performanceObject.CalculateReferenceTradesheetPerformanceMeasures(liveStartDate, gv.endDate, dbObject)
-    [performance, trades] = performanceObject.CalculateTradesheetPerformanceMeasures(liveStartDate, gv.endDate, dbObject)
+    [performanceRef, tradesRef] = performanceObject.CalculateReferenceTradesheetPerformanceMeasures(testingStartDate, periodEndDate, dbObject)
+    [performance, trades] = performanceObject.CalculateTradesheetPerformanceMeasures(testingStartDate, periodEndDate, dbObject)
 
     with open(gv.performanceOutfileName, 'w') as fp:
         w = csv.writer(fp)
