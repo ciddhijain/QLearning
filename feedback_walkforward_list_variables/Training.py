@@ -6,7 +6,7 @@ import logging
 
 class Training:
 
-    def train(self, startDate, endDate, dbObject, mtmObject, rewardMatrixObject, qMatrixObject):
+    def train(self, startDate, endDate, walkforward, dbObject, mtmObject, rewardMatrixObject, qMatrixObject):
         date = startDate
         periodEndDate = endDate
         startTime = timedelta(hours=9, minutes=15)
@@ -21,7 +21,7 @@ class Training:
             for checkTradingDay, dummy0 in resultTradingDay:
                 if checkTradingDay==1:
                     # Its a trading day
-                    resultTrades = dbObject.getRankedTradesOrdered(date, startTime, endTime)
+                    resultTrades = dbObject.getRankedTradesOrdered(date, startTime, endTime, walkforward)
                     for tradeId, individualId, tradeType, entryDate, entryTime, entryPrice, entryQty, exitDate, exitTime, exitPrice in resultTrades:
                         resultTradesExit = dbObject.getTrainingTradesExit(date, lastCheckedTime, entryTime)
                         for id, type, qty, entry_price, exit_price in resultTradesExit:

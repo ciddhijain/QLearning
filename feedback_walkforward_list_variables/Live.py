@@ -6,7 +6,7 @@ import logging
 
 class Live:
 
-    def live(self,  startDate, endDate, dbObject, mtmObject, rewardMatrixObject, qMatrixObject, reallocationObject):
+    def live(self,  startDate, endDate, walkforward, dbObject, mtmObject, rewardMatrixObject, qMatrixObject, reallocationObject):
         date = startDate
         periodEndDate = endDate
         startTime = timedelta(hours=9, minutes=15)
@@ -21,7 +21,7 @@ class Live:
             for checkTradingDay, dummy0 in resultTradingDay:
                 if checkTradingDay==1:
                     # Its a trading day. We now get trades from original tradesheet
-                    resultTrades = dbObject.getRankedTradesOrdered(date, startTime, endTime)
+                    resultTrades = dbObject.getRankedTradesOrdered(date, startTime, endTime, walkforward)
                     for tradeId, individualId, tradeType, entryDate, entryTime, entryPrice, entryQty, exitDate, exitTime, exitPrice in resultTrades:
                         resultTradesExit = dbObject.getTradesExit(date, lastCheckedTime, entryTime)
                         for id, type, qty, entry_price, exit_price in resultTradesExit:

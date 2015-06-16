@@ -54,18 +54,17 @@ class QLearningWrapper:
         testingEndDate = liveEndDate
         periodEndDate = gv.endDate
         startTime = timedelta(hours=9, minutes=15)
+        walkforward = 1
 
-        dbObject.initializeRanks()
-        dbObject.initializePerformance()
         dbObject.resetAssetAllocation(liveStartDate, startTime)
 
         done = False
 
         while (not done):
             dbObject.resetAssetTraining()
-            trainingObject.train(trainingStartDate, trainingEndDate, dbObject, mtmObject, rewardMatrixObject, qMatrixObject)
+            trainingObject.train(trainingStartDate, trainingEndDate, walkforward, dbObject, mtmObject, rewardMatrixObject, qMatrixObject)
             dbObject.resetLatestIndividualsWalkForward()
-            liveObject.live(liveStartDate, liveEndDate, dbObject, mtmObject, rewardMatrixObject, qMatrixObject, reallocationObject)
+            liveObject.live(liveStartDate, liveEndDate, walkforward, dbObject, mtmObject, rewardMatrixObject, qMatrixObject, reallocationObject)
             if liveEndDate>=periodEndDate:
                 done = True
             else:

@@ -158,12 +158,13 @@ class DBUtils:
         return databaseObject.Execute(queryTrades)
 
     # Function to get new trades from original tradesheet based on ranking
-    def getRankedTradesOrdered (self, date, startTime, endTime):
+    # TODO - check query
+    def getRankedTradesOrdered (self, date, startTime, endTime, walkforward):
         global databaseObject
         global rankingTable
         queryTrades = "SELECT t.* FROM old_tradesheet_data_table AS t JOIN " + rankingTable + " as r ON t.individual_id=r.individual_id" \
                       " WHERE t.entry_date='" + str(date) + "' AND t.entry_time<'" + str(endTime) + "' AND t.entry_time>='" + str(startTime) + \
-                      "' ORDER BY t.entry_time, r.ranking"
+                      "' AND r.ranking_walkforward_id=" + str(walkforward) + " ORDER BY t.entry_time, r.ranking"
         #print(queryTrades)
         return databaseObject.Execute(queryTrades)
 
