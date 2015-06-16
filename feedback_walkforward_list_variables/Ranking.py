@@ -8,7 +8,7 @@ class Ranking:
 
         # fetching performance for all individuals
         for individualId, dummy1 in resultIndividuals:
-            resultPM = performanceDrawdownObject.calculatePerformance(startDate, endDate, individualId, dbObject)
+            resultPM = performanceDrawdownObject.calculateIndividualPerformanceFromMTM(startDate, endDate, individualId, dbObject)
             dbObject.insertPerformance(individualId, resultPM[0][1], rankingWalkforward)
 
         # Updating ranks in db

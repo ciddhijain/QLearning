@@ -3,6 +3,7 @@ __author__ = 'Ciddhi'
 import GlobalVariables as gv
 from QLearningWrapper import *
 import logging
+from MTMOfflineCalculation import *
 from datetime import datetime
 
 if __name__ == "__main__":
@@ -15,8 +16,13 @@ if __name__ == "__main__":
     qLearningObject = QLearningWrapper()
     performanceDrawdownObject = PerformanceDrawdown()
     rankingObject = Ranking()
+    mtmOfflineObject = MTMOfflineCalculation()
     dbObject = DBUtils()
     dbObject.dbConnect()
+
+    mtmStartDate = gv.startDate
+    mtmEndDate = gv.endDate - timedelta(days=gv.liveDays) - timedelta(days=gv.initializationDays)
+    mtmOfflineObject.calculateDailyMTM(mtmStartDate, mtmEndDate, dbObject)
 
     rankingStartDate = gv.startDate
     rankingEndDate = rankingStartDate + timedelta(days=gv.rankingDays)

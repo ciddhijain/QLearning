@@ -9,7 +9,7 @@ from DBUtils import *
 
 class PerformanceDrawdown:
 
-    def calculatePerformanceFromMTM(self, startDate, endDate, individualId, dbObject):
+    def calculateIndividualPerformanceFromMTM(self, startDate, endDate, individualId, dbObject):
         if endDate<startDate:
             return None
         else:
@@ -19,7 +19,7 @@ class PerformanceDrawdown:
             mtmList = []
             netPL = 0
             while not done:
-                resultDailyMTM = dbObject.getDailyMTM(date)
+                resultDailyMTM = dbObject.getDailyMTM(individualId, date)
                 for mtm, dummy in resultDailyMTM:
                     if mtm:
                         mtmList.append(mtm)

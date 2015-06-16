@@ -176,9 +176,9 @@ class DBUtils:
         return
 
     # Function to return mtm for a given date
-    def getDailyMTM(self, date):
+    def getDailyMTM(self, individualId, date):
         global databaseObject
-        query = "SELECT SUM(mtm), 1 FROM " + gv.dailyMtmTableBase + " WHERE mtm_date='" + str(date) + "'"
+        query = "SELECT mtm, 1 FROM " + gv.dailyMtmTableBase + " WHERE mtm_date='" + str(date) + "' AND individual_id=" + str(individualId)
         return databaseObject.Execute(query)
 
     # Function to get new trades from original tradesheet based on ranking
