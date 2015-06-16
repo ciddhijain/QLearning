@@ -108,28 +108,32 @@ if __name__ == "__main__":
     plotObject.plotRefPLPerTrade(dbObject)
     plotObject.plotAsset(testingStartDate, periodEndDate, dbObject)
     plotObject.plotTrades(dbObject)
-    plotObject.plotPLPerTrade(dbObject)
     plotObject.plotPL(dbObject)
+    plotObject.plotPLPerTrade(dbObject)
 
     [performanceRef, tradesRef] = performanceObject.CalculateReferenceTradesheetPerformanceMeasures(testingStartDate, periodEndDate, dbObject)
     [performance, trades] = performanceObject.CalculateTradesheetPerformanceMeasures(testingStartDate, periodEndDate, dbObject)
+    [performanceTraining, tradesTraining] = performanceObject.CalculateTrainingTradesheetPerformanceMeasures(testingStartDate, periodEndDate, dbObject)
 
     with open(gv.performanceOutfileName, 'w') as fp:
         w = csv.writer(fp)
         w.writerow(["original performance", "number of trades"])
         w.writerow([performanceRef, tradesRef])
-        w.writerow(["q learning parallel performance", "number of trades"])
+        w.writerow(["q learning performance", "number of trades"])
         w.writerow([performance, trades])
+        w.writerow(["q learning training performance", "number of trades"])
+        w.writerow([performanceTraining, tradesTraining])
 
     done = False
     with open(gv.performanceMonthlyOutfileName, 'w') as fp:
         w = csv.writer(fp)
-        w.writerow(["original performance", "number of trades", "q learning performance", "number of trades"])
+        w.writerow(["original performance", "number of trades", "q learning performance", "number of trades", "q learning training performance", "number of trades"])
         #w.writerow(["q learning performance", "number of trades"])
         while not done:
             [performanceRef, tradesRef] = performanceObject.CalculateReferenceTradesheetPerformanceMeasures(testingStartDate, testingEndDate, dbObject)
             [performance, trades] = performanceObject.CalculateTradesheetPerformanceMeasures(testingStartDate, testingEndDate, dbObject)
-            w.writerow([performanceRef, tradesRef, performance, trades])
+            [performanceTraining, tradesTraining] = performanceObject.CalculateTrainingTradesheetPerformanceMeasures(testingStartDate, testingEndDate, dbObject)
+            w.writerow([performanceRef, tradesRef, performance, trades, performanceTraining, tradesTraining])
             #w.writerow([performance, trades])
             if testingEndDate>=periodEndDate:
                 done = True
