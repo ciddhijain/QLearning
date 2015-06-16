@@ -77,13 +77,17 @@ if __name__ == "__main__":
     dbObject.resetAssetAllocation(liveStartDate, startTime)
     done = False
 
+    walkforward = 1
+
     print('Started at : ' + str(datetime.now()))
     while (not done):
+        print(str(datetime.now()) + " - Starting walkforward " + str(walkforward))
         dbObject.resetAssetTraining()
         rankingObject.updateRankings(walkforwardStartDate, walkforwardEndDate, performanceDrawdownObject, dbObject, pool)
         trainingObject.train(trainingStartDate, trainingEndDate, dbObject, mtmObject, rewardMatrixObject, qMatrixObject)
         dbObject.resetLatestIndividualsWalkForward()
         liveObject.live(liveStartDate, liveEndDate, dbObject, mtmObject, rewardMatrixObject, qMatrixObject, reallocationObject)
+        walkforward += 1
         if liveEndDate>=periodEndDate:
             done = True
         else:

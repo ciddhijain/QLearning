@@ -6,6 +6,10 @@ from datetime import timedelta
 class MTM:
 
     def calculateMTM (self, individualId, startDate, startTime, endDate, endTime, dbObject):
+        posMtm = 0
+        posQty = 0
+        negMtm = 0
+        negQty = 0
         # Query to get live trades for the individual
         resultTrades = dbObject.getTradesIndividual(individualId, startDate, startTime, endDate, endTime)
         for tradeId, individualId, tradeType, entryDate, entryTime, entryPrice, entryQty, exitDate, exitTime, exitPrice in resultTrades:
@@ -36,13 +40,20 @@ class MTM:
             if tradeType==1:
                 if price and endPrice:
                     mtm = (endPrice-price) * entryQty
-                    dbObject.insertMTM(individualId, tradeId, tradeType, entryDate, endTime, mtm)
+                    posMtm += mtm
+                    posQty += entryQty
             else:
                 if price and endPrice:
                     mtm = (price-endPrice) * entryQty
-                    dbObject.insertMTM(individualId, tradeId, tradeType, entryDate, endTime, mtm)
+                    negMtm += mtm
+                    negQty += entryQty
+        return [posMtm, posQty, negMtm, negQty]
 
     def calculateTrainingMTM (self, individualId, startDate, startTime, endDate, endTime, dbObject):
+        posMtm = 0
+        posQty = 0
+        negMtm = 0
+        negQty = 0
         # Query to get live trades for the individual
         resultTrades = dbObject.getTrainingTradesIndividual(individualId, startDate, startTime, endDate, endTime)
         for tradeId, individualId, tradeType, entryDate, entryTime, entryPrice, entryQty, exitDate, exitTime, exitPrice in resultTrades:
@@ -73,11 +84,14 @@ class MTM:
             if tradeType==1:
                 if price and endPrice:
                     mtm = (endPrice-price) * entryQty
-                    dbObject.insertTrainingMTM(individualId, tradeId, tradeType, entryDate, endTime, mtm)
+                    posMtm += mtm
+                    posQty += entryQty
             else:
                 if price and endPrice:
                     mtm = (price-endPrice) * entryQty
-                    dbObject.insertTrainingMTM(individualId, tradeId, tradeType, entryDate, endTime, mtm)
+                    negMtm += mtm
+                    negQty = entryQty
+        return [posMtm, posQty, negMtm, negQty]
 
 
 if __name__ == "__main__":
