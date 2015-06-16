@@ -17,11 +17,13 @@ class PerformanceDrawdown:
             periodEndDate = endDate
             done = True
             mtmList = []
+            netPL = 0
             while not done:
                 resultDailyMTM = dbObject.getDailyMTM(date)
                 for mtm, dummy in resultDailyMTM:
                     if mtm:
                         mtmList.append(mtm)
+                        netPL += mtm
                     else:
                         mtmList.append(0)
                 date = date + timedelta(days=1)
@@ -47,7 +49,10 @@ class PerformanceDrawdown:
                 if dd < maxDrawdown:
                     maxDrawdown = dd
 
-            return maxDrawdown
+            if maxDrawdown==0:
+                return gv.dummyPerformance
+            else:
+                return netPL/maxDrawdown
 
     def calculatePerformance(self, startDate, endDate, individualId, dbObject):
         resultDates = dbObject.dbQuery("SELECT DISTINCT(date), 1 FROM price_series_table WHERE date >= '" + str(startDate)+
