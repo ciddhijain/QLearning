@@ -15,5 +15,5 @@ class Ranking:
         resultPerformanceList = dbObject.getRankedIndividuals(rankingWalkforward)
         count = 0
         for individualId, dummy in resultPerformanceList:
-            dbObject.inserteRank(individualId, count+1, rankingWalkforward)
+            dbObject.insertRank(individualId, count+1, rankingWalkforward)
             count += 1

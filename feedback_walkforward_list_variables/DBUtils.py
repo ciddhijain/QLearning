@@ -726,7 +726,7 @@ class DBUtils:
         global databaseObject
         global performanceTable
         queryInsert = "INSERT INTO " + performanceTable + \
-                      " (individual_id, performance ranking_walkforward_id)" \
+                      " (individual_id, performance, ranking_walkforward_id)" \
                       " VALUES" \
                       " (" + str(individualId) + ", " + str(performance) + ", " + str(walkforward) + ")"
         return databaseObject.Execute(queryInsert)
