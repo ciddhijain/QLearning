@@ -28,4 +28,25 @@ if __name__ == "__main__":
                      " price float"
                      " )")
 
+    dbObject.dbQuery(" CREATE TABLE IF NOT EXISTS " + gv.performanceTableBase +
+                     " ("
+                     " individual_id int,"
+                     " performance float,"
+                     " ranking_walkforward_id int"
+                     " )")
+
+    dbObject.dbQuery("CREATE TABLE IF NOT EXISTS " + gv.rankingTableBase +
+                     " ("
+                     " individual_id int,"
+                     " ranking int,"
+                     " ranking_walkforward_id int"
+                     " )")
+
+    dbObject.dbQuery("CREATE TABLE IF NOT EXISTS " + gv.rankingWalkforwardTableBase +
+                     " ("
+                     " ranking_walkforward_id int,"
+                     " ranking_start_date date,"
+                     " ranking_end_date date"
+                     " )")
+
     dbObject.dbClose()

@@ -19,10 +19,9 @@ class QLearningWrapper:
     def feedback(self, alpha, gamma, individualFactor, zeroRange, greedyLevel):
 
         setupObject = Setup(alpha, gamma, individualFactor, zeroRange, greedyLevel)
-        [variableString, latestIndividualTable, trainingTradesheetTable, trainingAssetTable, rankingTable, performanceTable, qMatrixTable, reallocationTable, assetTable, dailyAssetTable, newTradesheetTable] = setupObject.createQLearningTables()
+        [variableString, latestIndividualTable, trainingTradesheetTable, trainingAssetTable, qMatrixTable, reallocationTable, assetTable, dailyAssetTable, newTradesheetTable] = setupObject.createQLearningTables()
 
-        dbObject = DBUtils(alpha, gamma, individualFactor, zeroRange, greedyLevel, latestIndividualTable, trainingTradesheetTable, trainingAssetTable, rankingTable, performanceTable, qMatrixTable, reallocationTable, assetTable, dailyAssetTable, newTradesheetTable)
-        rankingObject = Ranking()
+        dbObject = DBUtils(alpha, gamma, individualFactor, zeroRange, greedyLevel, latestIndividualTable, trainingTradesheetTable, trainingAssetTable, qMatrixTable, reallocationTable, assetTable, dailyAssetTable, newTradesheetTable)
         mtmObject = MTM()
         rewardMatrixObject = RewardMatrix(alpha)
         qMatrixObject = QMatrix(gamma, greedyLevel)
@@ -31,7 +30,6 @@ class QLearningWrapper:
         reallocationObject = Reallocation()
         plotObject = Plots()
         performanceObject = PerformanceMeasures()
-        performanceDrawdownObject = PerformanceDrawdown()
         performanceOutfileName = gv.performanceOutfileNameBase + variableString
         performanceMonthlyOutfileName = gv.performanceMonthlyOutfileNameBase + variableString
 
@@ -44,9 +42,7 @@ class QLearningWrapper:
         dbObject.dbQuery("DELETE FROM " + qMatrixTable)
         dbObject.dbQuery("DELETE FROM " + trainingAssetTable)
         dbObject.dbQuery("DELETE FROM " + trainingTradesheetTable)
-        dbObject.dbQuery("DELETE FROM " + rankingTable)
         dbObject.dbQuery("DELETE FROM " + latestIndividualTable)
-        dbObject.dbQuery("DELETE FROM " + performanceTable)
 
         rankingStartDate = gv.startDate
         rankingEndDate = rankingStartDate + timedelta(days=gv.rankingDays)
@@ -67,7 +63,6 @@ class QLearningWrapper:
 
         while (not done):
             dbObject.resetAssetTraining()
-            rankingObject.updateRankings(rankingStartDate, rankingEndDate, dbObject, performanceDrawdownObject)
             trainingObject.train(trainingStartDate, trainingEndDate, dbObject, mtmObject, rewardMatrixObject, qMatrixObject)
             dbObject.resetLatestIndividualsWalkForward()
             liveObject.live(liveStartDate, liveEndDate, dbObject, mtmObject, rewardMatrixObject, qMatrixObject, reallocationObject)
@@ -76,12 +71,8 @@ class QLearningWrapper:
             else:
                 dbObject.updateQMatrixTableWalkForward()
                 dbObject.updateAssetWalkForward()
-                dbObject.resetRanks()
-                dbObject.resetPerformance()
                 trainingEndDate = liveEndDate
                 trainingStartDate = trainingEndDate - timedelta(days=gv.initializationDays)
-                rankingEndDate = trainingStartDate - timedelta(days=1)
-                rankingStartDate = rankingEndDate - timedelta(days=gv.rankingDays)
                 liveStartDate = liveEndDate + timedelta(days=1)
                 liveEndDate = liveStartDate + timedelta(days=gv.liveDays)
                 if liveEndDate>periodEndDate:

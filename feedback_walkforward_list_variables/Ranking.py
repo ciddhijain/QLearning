@@ -2,17 +2,18 @@ __author__ = 'Ciddhi'
 
 class Ranking:
 
-    def updateRankings(self, startDate, endDate, dbObject, performanceDrawdownObject):
+    def updateRankings(self, startDate, endDate, rankingWalkforward, dbObject, performanceDrawdownObject):
         resultIndividuals = dbObject.getRefIndividuals(startDate, endDate)
+        dbObject.insertRankingWalkforward(startDate, endDate, rankingWalkforward)
 
         # fetching performance for all individuals
         for individualId, dummy1 in resultIndividuals:
             resultPM = performanceDrawdownObject.calculatePerformance(startDate, endDate, individualId, dbObject)
-            dbObject.updatePerformance(individualId, resultPM[0][1])
+            dbObject.insertPerformance(individualId, resultPM[0][1], rankingWalkforward)
 
         # Updating ranks in db
-        resultPerformanceList = dbObject.getRankedIndividuals()
+        resultPerformanceList = dbObject.getRankedIndividuals(rankingWalkforward)
         count = 0
         for individualId, dummy in resultPerformanceList:
-            dbObject.updateRank(individualId, count+1)
+            dbObject.inserteRank(individualId, count+1, rankingWalkforward)
             count += 1

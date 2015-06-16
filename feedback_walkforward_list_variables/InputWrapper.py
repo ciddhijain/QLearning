@@ -13,6 +13,36 @@ if __name__ == "__main__":
     greedyLevelList = gv.maxGreedyLevel
 
     qLearningObject = QLearningWrapper()
+    performanceDrawdownObject = PerformanceDrawdown()
+    rankingObject = Ranking()
+    dbObject = DBUtils()
+    dbObject.dbConnect()
+
+    rankingStartDate = gv.startDate
+    rankingEndDate = rankingStartDate + timedelta(days=gv.rankingDays)
+    trainingStartDate = rankingEndDate + timedelta(days=1)
+    trainingEndDate = trainingStartDate + timedelta(days=gv.initializationDays)
+    liveStartDate = trainingEndDate + timedelta(days=1)
+    liveEndDate = liveStartDate + timedelta(days=gv.liveDays)
+    periodEndDate = gv.endDate
+    done = False
+    rankingWalkforward = 1
+
+    while not done:
+        rankingObject.updateRankings(rankingStartDate, rankingEndDate, rankingWalkforward, dbObject, performanceDrawdownObject)
+        if liveEndDate>=periodEndDate:
+            done = True
+        else:
+            trainingEndDate = liveEndDate
+            trainingStartDate = trainingEndDate - timedelta(days=gv.initializationDays)
+            rankingEndDate = trainingStartDate - timedelta(days=1)
+            rankingStartDate = rankingEndDate - timedelta(days=gv.rankingDays)
+            liveStartDate = liveEndDate + timedelta(days=1)
+            liveEndDate = liveStartDate + timedelta(days=gv.liveDays)
+            if liveEndDate>periodEndDate:
+                liveEndDate = periodEndDate
+
+    dbObject.dbClose()
 
     logging.basicConfig(filename=gv.logFileName, level=logging.INFO, format='%(asctime)s %(message)s')
 

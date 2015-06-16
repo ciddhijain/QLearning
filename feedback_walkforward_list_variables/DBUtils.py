@@ -26,8 +26,8 @@ class DBUtils:
     performanceTable = None
 
     def __init__(self, alpha_local=0, gamma_local=0, individualFactor_local=1, zeroRange_local=0, greedyLevel_local=0,
-                 latestIndividualTable_local="", trainingTradesheetTable_local="", trainingAssetTable_local="", rankingTable_local="", performanceTable_local="",
-                 qMatrixTable_local="", reallocationTable_local="", assetTable_local="", dailyAssetTable_local="", newTradesheetTable_local=""):
+                 latestIndividualTable_local="", trainingTradesheetTable_local="", trainingAssetTable_local="", qMatrixTable_local="",
+                 reallocationTable_local="", assetTable_local="", dailyAssetTable_local="", newTradesheetTable_local=""):
         global alpha
         global gamma
         global individualFactor
@@ -54,13 +54,13 @@ class DBUtils:
         latestIndividualTable = latestIndividualTable_local
         trainingTradesheetTable = trainingTradesheetTable_local
         trainingAssetTable = trainingAssetTable_local
-        rankingTable = rankingTable_local
+        rankingTable = gv.rankingTableBase
         dailyAssetTable = dailyAssetTable_local
         newTradesheetTable = newTradesheetTable_local
         assetTable = assetTable_local
         qMatrixTable = qMatrixTable_local
         reallocationTable = reallocationTable_local
-        performanceTable = performanceTable_local
+        performanceTable = gv.performanceTableBase
 
     def dbConnect (self):
         db_username = gv.userName
@@ -654,6 +654,7 @@ class DBUtils:
         return databaseObject.Execute(queryPL)
 
     # Function to reset all ranks to maximum for initialization
+    # Not being used
     def initializeRanks(self):
         global databaseObject
         global rankingTable
@@ -670,6 +671,7 @@ class DBUtils:
                 databaseObject.Execute(queryInsert)
 
     # Function to reset all performances to minimum for initialization
+    # Not being used
     def initializePerformance(self):
         global databaseObject
         global performanceTable
@@ -682,6 +684,7 @@ class DBUtils:
                           " (" + str(individualId) + ", " + str(gv.dummyPerformance) + ")"
             databaseObject.Execute(queryInsert)
 
+    # Not being used
     def resetRanks(self):
         global databaseObject
         global rankingTable
@@ -691,31 +694,47 @@ class DBUtils:
             queryUpdate = "UPDATE " + rankingTable + " SET ranking=" + str(count)
             databaseObject.Execute(queryUpdate)
 
+    # Not being used
     def resetPerformance(self):
         global databaseObject
         global performanceTable
         queryUpdate = "UPDATE " + performanceTable + " SET performance=" + str(gv.dummyPerformance)
         return databaseObject.Execute(queryUpdate)
 
-    # Function to update rank of an individual
-    def updateRank(self, individualId, rank):
+    def insertRankingWalkforward(self, startDate, endDate, walkforward):
+        global databaseObject
+        query = "INSERT INTO " + gv.rankingWalkforwardTableBase + \
+                " (ranking_walkforward_id, ranking_start_date, ranking_end_date)" \
+                " VALUES" \
+                " (" + str(walkforward) + ", '" + str(startDate) + "', '" + str(endDate) + "')"
+        return databaseObject.Execute(query)
+
+
+    # Function to insert rank of an individual
+    def insertRank(self, individualId, rank, walkforward):
         global databaseObject
         global rankingTable
-        queryUpdate = "UPDATE " + rankingTable + " SET ranking=" + str(rank) + " WHERE individual_id=" + str(individualId)
-        databaseObject.Execute(queryUpdate)
+        queryInsert = "INSERT INTO " + rankingTable + \
+                      " (individual_id, ranking, ranking_walkforward_id)" \
+                      " VALUES" \
+                      " (" + str(individualId) + ", " + str(rank) + ", " + str(walkforward) + ")"
+        databaseObject.Execute(queryInsert)
 
-    # Function to update performance of an individual
-    def updatePerformance(self, individualId, performance):
+    # Function to insert performance of an individual
+    def insertPerformance(self, individualId, performance, walkforward):
         global databaseObject
         global performanceTable
-        queryUpdate = "UPDATE " + performanceTable + " SET performance=" + str(performance) + " WHERE individual_id=" + str(individualId)
-        return databaseObject.Execute(queryUpdate)
+        queryInsert = "INSERT INTO " + performanceTable + \
+                      " (individual_id, performance ranking_walkforward_id)" \
+                      " VALUES" \
+                      " (" + str(individualId) + ", " + str(performance) + ", " + str(walkforward) + ")"
+        return databaseObject.Execute(queryInsert)
 
     # Function to get ordered individuals from
-    def getRankedIndividuals(self):
+    def getRankedIndividuals(self, walkforward):
         global databaseObject
         global performanceTable
-        query = "SELECT individual_id, 1 FROM " + performanceTable + " WHERE NOT performance=" + str(gv.dummyPerformance) + " ORDER BY performance DESC"
+        query = "SELECT individual_id, 1 FROM " + performanceTable + " WHERE ranking_walkforward_id=" + str(walkforward) + " ORDER BY performance DESC"
         return databaseObject.Execute(query)
 
     # Function to return asset at month end

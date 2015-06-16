@@ -37,13 +37,11 @@ class Setup:
         latestIndividualTable = gv.latestIndividualTableBase + variableString
         trainingTradesheetTable = gv.trainingTradesheetTableBase + variableString
         trainingAssetTable = gv.trainingAssetTableBase + variableString
-        rankingTable = gv.rankingTableBase + variableString
         dailyAssetTable = gv.dailyAssetTableBase + variableString
         newTradesheetTable = gv.newTradesheetTableBase + variableString
         assetTable = gv.assetTableBase + variableString
         qMatrixTable = gv.qMatrixTableBase + variableString
         reallocationTable = gv.reallocationTableBase + variableString
-        performanceTable = gv.performanceTableBase + variableString
 
         dbObject.dbQuery("CREATE TABLE IF NOT EXISTS " + latestIndividualTable +
                          " ("
@@ -70,12 +68,6 @@ class Setup:
                          " total_asset decimal(15,4),"
                          " used_asset decimal(15,4),"
                          " free_asset decimal(15,4)"
-                         " )")
-
-        dbObject.dbQuery("CREATE TABLE IF NOT EXISTS " + rankingTable +
-                         " ("
-                         " individual_id int,"
-                         " ranking int"
                          " )")
 
         dbObject.dbQuery("CREATE TABLE IF NOT EXISTS " + dailyAssetTable +
@@ -123,12 +115,6 @@ class Setup:
                          " last_state int"
                          " )")
 
-        dbObject.dbQuery(" CREATE TABLE IF NOT EXISTS " + performanceTable +
-                         " ("
-                         " individual_id int,"
-                         " performance float"
-                         " )")
-
         dbObject.dbClose()
 
-        return [variableString, latestIndividualTable, trainingTradesheetTable, trainingAssetTable, rankingTable, performanceTable, qMatrixTable, reallocationTable, assetTable, dailyAssetTable, newTradesheetTable]
+        return [variableString, latestIndividualTable, trainingTradesheetTable, trainingAssetTable, qMatrixTable, reallocationTable, assetTable, dailyAssetTable, newTradesheetTable]
