@@ -1,6 +1,7 @@
 __author__ = 'Ciddhi'
 
 from DBUtils import *
+import GlobalVariables as gv
 
 if __name__ == "__main__":
 
@@ -26,6 +27,13 @@ if __name__ == "__main__":
                      " date date,"
                      " time time,"
                      " price float"
+                     " )")
+
+    dbObject.dbQuery("CREATE TABLE IF NOT EXISTS " + gv.dailyMtmTableBase +
+                     " ("
+                     " individual_id int,"
+                     " mtm float,"
+                     " mtm_date date"
                      " )")
 
     dbObject.dbQuery(" CREATE TABLE IF NOT EXISTS " + gv.performanceTableBase +

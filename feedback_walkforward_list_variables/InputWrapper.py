@@ -30,7 +30,7 @@ if __name__ == "__main__":
 
     while not done:
         rankingObject.updateRankings(rankingStartDate, rankingEndDate, rankingWalkforward, dbObject, performanceDrawdownObject)
-	rankingWalkforward += 1
+        rankingWalkforward += 1
         if liveEndDate>=periodEndDate:
             done = True
         else:

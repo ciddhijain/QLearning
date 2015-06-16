@@ -150,15 +150,38 @@ class DBUtils:
         return databaseObject.Execute(queryTrades)
 
     # Function to get new trades from original tradesheet
-    def getTradesOrdered (self, date, startTime, endTime):
+    def getRefDayTrades (self, date):
         global databaseObject
-        queryTrades = "SELECT * FROM old_tradesheet_data_table WHERE entry_date='" + str(date) + "' AND entry_time<'" + str(endTime) + \
-                      "' AND entry_time>='" + str(startTime) + "' ORDER BY entry_time"
+        queryTrades = "SELECT * FROM old_tradesheet_data_table WHERE entry_date='" + str(date) + "'"
         #print(queryTrades)
         return databaseObject.Execute(queryTrades)
 
+    # Function to add or update mtm for an individual in daily mtm table
+    def insertOrUpdateMTM(self, individualId, date, mtm):
+        global databaseObject
+        queryCheck = "SELECT EXISTS ( SELECT 1 FROM " + gv.dailyMtmTableBase + " WHERE individual_id="+ str(individualId) + \
+                     " AND mtm_date='" + str(date) + "' ), 1"
+        resultCheck = databaseObject.Execute(queryCheck)
+        for check, dummy in resultCheck:
+            if check==1:
+                query = "UPDATE " + gv.dailyMtmTableBase + " SET mtm=mtm+" + str(mtm) + " WHERE individual_id=" + str(individualId) + \
+                        " AND date='" + str(date) + "'"
+                databaseObject.Execute(query)
+            else:
+                query = "INSERT INTO " + gv.dailyMtmTableBase + \
+                        " ( individual_id, mtm, mtm_date )" \
+                        " VALUES" \
+                        " ( " + str(individualId) + ", " + str(mtm) + ", '" + str(date) + "' )"
+                databaseObject.Execute(query)
+        return
+
+    # Function to return mtm for a given date
+    def getDailyMTM(self, date):
+        global databaseObject
+        query = "SELECT SUM(mtm), 1 FROM " + gv.dailyMtmTableBase + " WHERE mtm_date='" + str(date) + "'"
+        return databaseObject.Execute(query)
+
     # Function to get new trades from original tradesheet based on ranking
-    # TODO - check query
     def getRankedTradesOrdered (self, date, startTime, endTime, walkforward):
         global databaseObject
         global rankingTable
@@ -229,118 +252,6 @@ class DBUtils:
         global databaseObject
         queryPrice = "SELECT time, price FROM price_series_table WHERE date='" + str(startDate) + "' AND time='" + str(startTime) + "'"
         return databaseObject.Execute(queryPrice)
-
-    # Function to insert MTM value in db
-    def insertMTM(self, individualId, tradeId, tradeType, entryDate, mtmTime, mtm):
-        global databaseObject
-        queryCheckRecord = "SELECT EXISTS (SELECT 1 FROM mtm_table WHERE trade_id=" + str(tradeId) + " AND date='" + str(entryDate) + \
-                           "' AND time='" + str(mtmTime) + "'), 0"
-
-        resultRecord = databaseObject.Execute(queryCheckRecord)
-        for result, dummy in resultRecord:
-            if result==0:
-                queryInsertMTM = "INSERT INTO mtm_table " \
-                                 "(trade_id, individual_id, trade_type, date, time, mtm) " \
-                                 "VALUES " \
-                                 "(" + str(tradeId) + ", " + str(individualId) + ", " + str(tradeType) + \
-                                 ", '" + str(entryDate) + "', '" + str(mtmTime) + "', " + str(mtm) + ")"
-                return databaseObject.Execute(queryInsertMTM)
-
-    # Function to insert MTM value in db during training
-    def insertTrainingMTM(self, individualId, tradeId, tradeType, entryDate, mtmTime, mtm):
-        global databaseObject
-        queryCheckRecord = "SELECT EXISTS (SELECT 1 FROM training_mtm_table WHERE trade_id=" + str(tradeId) + " AND date='" + str(entryDate) + \
-                           "' AND time='" + str(mtmTime) + "'), 0"
-
-        resultRecord = databaseObject.Execute(queryCheckRecord)
-        for result, dummy in resultRecord:
-            if result==0:
-                queryInsertMTM = "INSERT INTO training_mtm_table " \
-                                 "(trade_id, individual_id, trade_type, date, time, mtm) " \
-                                 "VALUES " \
-                                 "(" + str(tradeId) + ", " + str(individualId) + ", " + str(tradeType) + \
-                                 ", '" + str(entryDate) + "', '" + str(mtmTime) + "', " + str(mtm) + ")"
-                return databaseObject.Execute(queryInsertMTM)
-
-    # Function to get net MTM for all long trades
-    def getTotalPosMTM (self, individualId, startDate, startTime, endDate, endTime):
-        global databaseObject
-        queryMTM = "SELECT SUM(mtm), 1 FROM mtm_table WHERE individual_id=" + str(individualId) +\
-                   " AND time>'" + str(startTime) + "' AND date>='" + str(startDate) + \
-                   "' AND date<='" + str(endDate) + "' AND time<='" + str(endTime) + \
-                   "' AND trade_type=1"
-        #print(queryMTM)
-        return databaseObject.Execute(queryMTM)
-
-    # function to get total quantity for all long trades
-    def getTotalPosQty (self, individualId, startDate, startTime, endDate, endTime):
-        global databaseObject
-        global newTradesheetTable
-        queryQty = "SELECT SUM(entry_qty), 1 FROM " + newTradesheetTable + " WHERE individual_id=" \
-                   + str(individualId) + " AND entry_time<'" + str(endTime) + "' AND exit_time>'" + str(startTime) + \
-                   "' AND entry_date='" + str(startDate) + "' AND trade_type=1"
-        #print(queryQty)
-        return databaseObject.Execute(queryQty)
-
-    # Function to get net MTM for all short trades
-    def getTotalNegMTM (self, individualId, startDate, startTime, endDate, endTime):
-        global databaseObject
-        queryMTM = "SELECT SUM(mtm), 1 FROM mtm_table WHERE individual_id=" + str(individualId) + \
-                   " AND time>'" + str(startTime) + "' AND date>='" + str(startDate) + \
-                   "' AND date<='" + str(endDate) + "' AND time<='" + str(endTime) + \
-                   "' AND trade_type=0"
-        #print(queryMTM)
-        return databaseObject.Execute(queryMTM)
-
-    # Function to get total quantity for all short trades
-    def getTotalNegQty (self, individualId, startDate, startTime, endDate, endTime):
-        global databaseObject
-        global newTradesheetTable
-        queryQty = "SELECT SUM(entry_qty), 1 FROM " + newTradesheetTable + " WHERE individual_id=" \
-                   + str(individualId) + " AND entry_time<'" + str(endTime) + "' AND exit_time>'" + str(startTime) + \
-                   "' AND entry_date='" + str(startDate) + "' AND trade_type=0"
-        #print(queryQty)
-        return databaseObject.Execute(queryQty)
-
-    # Function to get net MTM for all long trades during training
-    def getTrainingTotalPosMTM (self, individualId, startDate, startTime, endDate, endTime):
-        global databaseObject
-        queryMTM = "SELECT SUM(mtm), 1 FROM training_mtm_table WHERE individual_id=" + str(individualId) +\
-                   " AND time>'" + str(startTime) + "' AND date>='" + str(startDate) + \
-                   "' AND date<='" + str(endDate) + "' AND time<='" + str(endTime) + \
-                   "' AND trade_type=1"
-        #print(queryMTM)
-        return databaseObject.Execute(queryMTM)
-
-    # function to get total quantity for all long trades during training
-    def getTrainingTotalPosQty (self, individualId, startDate, startTime, endDate, endTime):
-        global databaseObject
-        global trainingTradesheetTable
-        queryQty = "SELECT SUM(entry_qty), 1 FROM " + trainingTradesheetTable + " WHERE individual_id=" \
-                   + str(individualId) + " AND entry_time<'" + str(endTime) + "' AND exit_time>'" + str(startTime) + \
-                   "' AND entry_date='" + str(startDate) + "' AND trade_type=1"
-        #print(queryQty)
-        return databaseObject.Execute(queryQty)
-
-    # Function to get net MTM for all short trades during training
-    def getTrainingTotalNegMTM (self, individualId, startDate, startTime, endDate, endTime):
-        global databaseObject
-        queryMTM = "SELECT SUM(mtm), 1 FROM training_mtm_table WHERE individual_id=" + str(individualId) + \
-                   " AND time>'" + str(startTime) + "' AND date>='" + str(startDate) + \
-                   "' AND date<='" + str(endDate) + "' AND time<='" + str(endTime) + \
-                   "' AND trade_type=0"
-        #print(queryMTM)
-        return databaseObject.Execute(queryMTM)
-
-    # Function to get total quantity for all short trades during training
-    def getTrainingTotalNegQty (self, individualId, startDate, startTime, endDate, endTime):
-        global databaseObject
-        global trainingTradesheetTable
-        queryQty = "SELECT SUM(entry_qty), 1 FROM " + trainingTradesheetTable + " WHERE individual_id=" \
-                   + str(individualId) + " AND entry_time<'" + str(endTime) + "' AND exit_time>'" + str(startTime) + \
-                   "' AND entry_date='" + str(startDate) + "' AND trade_type=0"
-        #print(queryQty)
-        return databaseObject.Execute(queryQty)
 
     # Function to get Q Matrix of an individual
     def getQMatrix (self, individualId):

@@ -9,6 +9,46 @@ from DBUtils import *
 
 class PerformanceDrawdown:
 
+    def calculatePerformanceFromMTM(self, startDate, endDate, individualId, dbObject):
+        if endDate<startDate:
+            return None
+        else:
+            date = startDate
+            periodEndDate = endDate
+            done = True
+            mtmList = []
+            while not done:
+                resultDailyMTM = dbObject.getDailyMTM(date)
+                for mtm, dummy in resultDailyMTM:
+                    if mtm:
+                        mtmList.append(mtm)
+                    else:
+                        mtmList.append(0)
+                date = date + timedelta(days=1)
+                if(date>periodEndDate):
+                    done = True
+            drawdownDateCount = len(mtmList)
+            count = 1
+            ddHistory = []
+            if mtmList[0]<0:
+                ddHistory.append(mtmList[0])
+            else:
+                ddHistory.append(0)
+
+            if count<drawdownDateCount:
+                if(mtmList[count]<0):
+                    ddHistory.append(mtmList[count] + ddHistory[count-1])
+                else:
+                    ddHistory.append(0)
+                count += 1
+
+            maxDrawdown = 0
+            for dd in ddHistory:
+                if dd < maxDrawdown:
+                    maxDrawdown = dd
+
+            return maxDrawdown
+
     def calculatePerformance(self, startDate, endDate, individualId, dbObject):
         resultDates = dbObject.dbQuery("SELECT DISTINCT(date), 1 FROM price_series_table WHERE date >= '" + str(startDate)+
                                        "' AND date <= '"+str(endDate)+"'")
