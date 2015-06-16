@@ -165,7 +165,7 @@ class DBUtils:
         for check, dummy in resultCheck:
             if check==1:
                 query = "UPDATE " + gv.dailyMtmTableBase + " SET mtm=mtm+" + str(mtm) + " WHERE individual_id=" + str(individualId) + \
-                        " AND date='" + str(date) + "'"
+                        " AND mtm_date='" + str(date) + "'"
                 databaseObject.Execute(query)
             else:
                 query = "INSERT INTO " + gv.dailyMtmTableBase + \
