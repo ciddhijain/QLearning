@@ -20,6 +20,10 @@ if __name__ == "__main__":
     dbObject = DBUtils()
     dbObject.dbConnect()
 
+    dbObject.dbQuery("DELETE FROM " + gv.rankingTableBase)
+    dbObject.dbQuery("DELETE FROM " + gv.performanceTableBase)
+    dbObject.dbQuery("DELETE FROM " + gv.rankingWalkforwardTableBase)
+
     mtmStartDate = gv.startDate
     mtmEndDate = gv.endDate - timedelta(days=gv.liveDays) - timedelta(days=gv.initializationDays)
     mtmOfflineObject.calculateDailyMTM(mtmStartDate, mtmEndDate, dbObject)
