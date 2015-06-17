@@ -57,11 +57,11 @@ if __name__ == "__main__":
 
     logging.basicConfig(filename=gv.logFileName, level=logging.INFO, format='%(asctime)s %(message)s')
 
-    for alpha in alphaList:
-        for gamma in gammaList:
-            for individualFactor in individualFactorList:
-                for zeroRange in zeroRangeList:
-                    for greedyLevel in greedyLevelList:
+    for individualFactor in individualFactorList:
+        for greedyLevel in greedyLevelList:
+            for zeroRange in zeroRangeList:
+                for alpha in alphaList:
+                    for gamma in gammaList:
                         print(str(datetime.now()) + "Starting Q Learning for : ")
                         print("alpha = " + str(alpha))
                         print("gamma = " + str(gamma))
