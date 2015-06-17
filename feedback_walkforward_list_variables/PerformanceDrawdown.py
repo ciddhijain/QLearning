@@ -15,7 +15,7 @@ class PerformanceDrawdown:
         else:
             date = startDate
             periodEndDate = endDate
-            done = True
+            done = False
             mtmList = []
             netPL = 0
             while not done:
@@ -37,7 +37,7 @@ class PerformanceDrawdown:
             else:
                 ddHistory.append(0)
 
-            if count<drawdownDateCount:
+            while count<drawdownDateCount:
                 if(mtmList[count]<0):
                     ddHistory.append(mtmList[count] + ddHistory[count-1])
                 else:
