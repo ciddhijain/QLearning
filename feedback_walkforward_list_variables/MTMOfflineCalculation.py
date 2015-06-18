@@ -7,8 +7,6 @@ class MTMOfflineCalculation:
 
     def calculateDailyMTM(self, startDate, endDate, dbObject):
 
-        logging.basicConfig(filename='RankingLogs.log', level=logging.INFO, format='%(asctime)s %(message)s')
-
         date = startDate
         periodEndDate = endDate
         done = False
