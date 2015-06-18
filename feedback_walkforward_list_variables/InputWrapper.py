@@ -86,4 +86,5 @@ if __name__ == "__main__":
                         workId += 1
 
     logging.info("Done Ranking. Calling processes now.")
-    pool.map(workList)
+    pool.map(startProcess, workList)
+    pool.close()
