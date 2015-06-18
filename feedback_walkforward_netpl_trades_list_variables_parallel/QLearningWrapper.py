@@ -5,7 +5,7 @@ from Reallocation import *
 from RewardMatrix import *
 from Training import *
 from Live import *
-from MTM import *
+from NetPL_Trades import *
 from Ranking import *
 from QMatrix import *
 from PerformanceMeasures import *
@@ -38,7 +38,7 @@ class QLearningWrapper:
         [variableString, latestIndividualTable, trainingTradesheetTable, trainingAssetTable, qMatrixTable, reallocationTable, assetTable, dailyAssetTable, newTradesheetTable] = setupObject.createQLearningTables()
 
         dbObject = DBUtils(alpha, gamma, individualFactor, zeroRange, greedyLevel, latestIndividualTable, trainingTradesheetTable, trainingAssetTable, qMatrixTable, reallocationTable, assetTable, dailyAssetTable, newTradesheetTable)
-        mtmObject = MTM()
+        mtmObject = NetPL_Trades()
         rewardMatrixObject = RewardMatrix(alpha)
         qMatrixObject = QMatrix(gamma, greedyLevel)
         trainingObject = Training()
