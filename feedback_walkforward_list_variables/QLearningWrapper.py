@@ -16,7 +16,23 @@ import calendar
 
 class QLearningWrapper:
 
-    def feedback(self, alpha, gamma, individualFactor, zeroRange, greedyLevel):
+    def feedback(self, alpha, gamma, individualFactor, zeroRange, greedyLevel, workId):
+
+        logging.basicConfig(filename=gv.logFileName + workId + '.log', level=logging.INFO, format='%(asctime)s %(message)s')
+
+        print(str(datetime.now()) + " Starting Q Learning for : ")
+        print("alpha = " + str(alpha))
+        print("gamma = " + str(gamma))
+        print("individual factor = " + str(individualFactor))
+        print("zero range = " + str(zeroRange))
+        print("greedy level = " + str(greedyLevel))
+        logging.info("Starting Q Learning for : ")
+        logging.info("alpha = " + str(alpha))
+        logging.info("gamma = " + str(gamma))
+        logging.info("individual factor = " + str(individualFactor))
+        logging.info("zero range = " + str(zeroRange))
+        logging.info("greedy level = " + str(greedyLevel))
+        logging.info("\n")
 
         setupObject = Setup(alpha, gamma, individualFactor, zeroRange, greedyLevel)
         [variableString, latestIndividualTable, trainingTradesheetTable, trainingAssetTable, qMatrixTable, reallocationTable, assetTable, dailyAssetTable, newTradesheetTable] = setupObject.createQLearningTables()

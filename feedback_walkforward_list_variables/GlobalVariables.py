@@ -2,7 +2,7 @@ __author__ = 'Ciddhi'
 
 from datetime import timedelta, datetime
 
-databaseName = 'QL_DEBUG'                            # This is database name to which connection is made
+databaseName = 'QL_AXIS2'                            # This is database name to which connection is made
 userName = 'root'                               # This is the user name for database connection
 password = 'controljp'                          # This is the password for database connection
 dbHost = '127.0.0.1'                            # This is host address for database connection
@@ -15,7 +15,9 @@ rankingDays = 30                                # This is the number of days for
 initializationDays = 30                         # This is the number of days for which q_matrix is initilaized
 liveDays = 30                                   # This is the number of days for which live trading is done
 
-logFileName = "QLearning.log"
+logFileName = "QLearningAXIS"
+
+maxProcesses = 3                                # This is the number of maximum processes
 
 #-----------------------------------------------------------------------------------------------------------------------------------------
 # These variables need to contain list values

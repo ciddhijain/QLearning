@@ -1,8 +1,11 @@
 __author__ = 'Ciddhi'
 
+import logging
+
 class Ranking:
 
     def updateRankings(self, startDate, endDate, rankingWalkforward, dbObject, performanceDrawdownObject):
+
         resultIndividuals = dbObject.getRefIndividuals(startDate, endDate)
         dbObject.insertRankingWalkforward(startDate, endDate, rankingWalkforward)
 
