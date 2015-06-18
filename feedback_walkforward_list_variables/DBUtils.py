@@ -551,6 +551,38 @@ class DBUtils:
                       "' AND trade_type=0"
         return databaseObject.Execute(queryTrades)
 
+    # Function to return Net Profit-Loss of Long trades in original table within an interval
+    def getTrainingLongNetPL(self, startDate, endDate):
+        global databaseObject
+        global trainingTradesheetTable
+        queryPL = "SELECT SUM((exit_price-entry_price)*entry_qty),1 FROM " + trainingTradesheetTable + " WHERE entry_date>='" + str(startDate) + \
+                  "' AND entry_date<='" + str(endDate) + "' AND trade_type=1"
+        return databaseObject.Execute(queryPL)
+
+    # Function to return Net Profit-Loss of Short trades in original table within an interval
+    def getTrainingShortNetPL(self, startDate, endDate):
+        global databaseObject
+        global trainingTradesheetTable
+        queryPL = "SELECT SUM((entry_price-exit_price)*entry_qty),1 FROM " + trainingTradesheetTable + " WHERE entry_date>='" + str(startDate) + \
+                  "' AND entry_date<='" + str(endDate) + "' AND trade_type=0"
+        return databaseObject.Execute(queryPL)
+
+    # Function to return number of Long trades in original table within an interval
+    def getTrainingLongTrades(self, startDate, endDate):
+        global databaseObject
+        global trainingTradesheetTable
+        queryTrades = "SELECT COUNT(*),1 FROM " + trainingTradesheetTable + " WHERE entry_date>='" + str(startDate) + "' AND entry_date<='" + str(endDate) + \
+                      "' AND trade_type=1"
+        return databaseObject.Execute(queryTrades)
+
+    # Function to return number of Short trades in original table within an interval
+    def getTrainingShortTrades(self, startDate, endDate):
+        global databaseObject
+        global trainingTradesheetTable
+        queryTrades = "SELECT COUNT(*),1 FROM " + trainingTradesheetTable + " WHERE entry_date>='" + str(startDate) + "' AND entry_date<='" + str(endDate) + \
+                      "' AND trade_type=0"
+        return databaseObject.Execute(queryTrades)
+
     # Function to return Net PL for long trades per individual from original tradesheet within an interval
     def getIndividualLongNetPL(self, startDate, endDate, individualId):
         global databaseObject
