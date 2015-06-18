@@ -18,7 +18,7 @@ class QLearningWrapper:
 
     def feedback(self, alpha, gamma, individualFactor, zeroRange, greedyLevel, workId):
 
-        logging.basicConfig(filename=gv.logFileName + workId + '.log', level=logging.INFO, format='%(asctime)s %(message)s')
+        logging.basicConfig(filename=gv.logFileName + str(workId) + '.log', level=logging.INFO, format='%(asctime)s %(message)s')
 
         print(str(datetime.now()) + " Starting Q Learning for : ")
         print("alpha = " + str(alpha))
