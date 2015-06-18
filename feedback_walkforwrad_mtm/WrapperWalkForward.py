@@ -26,6 +26,7 @@ if __name__ == "__main__":
     performanceObject = PerformanceMeasures()
 
     dbObject.dbConnect()
+    '''
 
     dbObject.dbQuery("DELETE FROM asset_allocation_table")
     dbObject.dbQuery("DELETE FROM asset_daily_allocation_table")
@@ -38,7 +39,6 @@ if __name__ == "__main__":
     dbObject.dbQuery("DELETE FROM training_tradesheet_data_table")
     dbObject.dbQuery("DELETE FROM ranking_table")
     dbObject.dbQuery("DELETE FROM latest_individual_table")
-    '''
 
     walkforwardStartDate = gv.startDate
     walkforwardEndDate = walkforwardStartDate + timedelta(days=1)
@@ -60,6 +60,7 @@ if __name__ == "__main__":
     testingEndDate = liveEndDate
     periodEndDate = gv.endDate
     startTime = timedelta(hours=9, minutes=15)
+    '''
 
     dbObject.initializeRanks()
     dbObject.initializePerformance()
@@ -90,6 +91,8 @@ if __name__ == "__main__":
                 liveEndDate = periodEndDate
     print('Finished at : ' + str(datetime.now()))
 
+    '''
+
     plotObject.plotRefTrades(dbObject)
     plotObject.plotRefPL(dbObject)
     plotObject.plotRefPLPerTrade(dbObject)
@@ -101,8 +104,8 @@ if __name__ == "__main__":
     with open(gv.performanceOutfileName, 'w') as fp:
         w = csv.writer(fp)
         w.writerow(["original performance", "number of trades", "q learning performance", "number of trades"])
-        [performanceRef, tradesRef] = performanceObject.CalculateReferenceTradesheetPerformanceMeasures(testingStartDate, testingEndDate, dbObject)
-        [performance, trades] = performanceObject.CalculateTradesheetPerformanceMeasures(testingStartDate, testingEndDate, dbObject)
+        [performanceRef, tradesRef] = performanceObject.CalculateReferenceTradesheetPerformanceMeasures(testingStartDate, periodEndDate, dbObject)
+        [performance, trades] = performanceObject.CalculateTradesheetPerformanceMeasures(testingStartDate, periodEndDate, dbObject)
         w.writerow([performanceRef, tradesRef, performance, trades])
 
     done = False
