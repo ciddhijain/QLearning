@@ -16,7 +16,7 @@ def startProcess(work):
     workId = work[5]
     qLearningObject = QLearningWrapper()
     qLearningObject.feedback(alpha, gamma, individualFactor, zeroRange, greedyLevel, workId)
-    return
+    return 0
 
 if __name__ == "__main__":
 
