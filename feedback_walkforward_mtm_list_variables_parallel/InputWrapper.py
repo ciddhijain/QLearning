@@ -87,4 +87,3 @@ if __name__ == "__main__":
 
     logging.info("Done Ranking. Calling processes now.")
     pool.map(startProcess, workList)
-    pool.close()
