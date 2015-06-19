@@ -40,6 +40,7 @@ if __name__ == "__main__":
     dbObject.dbQuery("DELETE FROM " + gv.rankingTableBase)
     dbObject.dbQuery("DELETE FROM " + gv.performanceTableBase)
     dbObject.dbQuery("DELETE FROM " + gv.rankingWalkforwardTableBase)
+    dbObject.dbQuery("DELETE FROM " + gv.dailyMtmTableBase)
 
     mtmStartDate = gv.startDate
     mtmEndDate = gv.endDate - timedelta(days=gv.liveDays) - timedelta(days=gv.initializationDays) + timedelta(days=1)
