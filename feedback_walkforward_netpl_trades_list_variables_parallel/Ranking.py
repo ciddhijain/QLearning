@@ -6,13 +6,13 @@ class Ranking:
 
     def updateRankings(self, startDate, endDate, rankingWalkforward, dbObject, performanceDrawdownObject):
 
-        resultIndividuals = dbObject.getRefIndividuals(startDate, endDate)
+        resultIndividuals = dbObject.getAllRefIndividuals()
         dbObject.insertRankingWalkforward(startDate, endDate, rankingWalkforward)
 
         # fetching performance for all individuals
         for individualId, dummy1 in resultIndividuals:
-            resultPM = performanceDrawdownObject.calculateIndividualPerformanceFromMTM(startDate, endDate, individualId, dbObject)
-            dbObject.insertPerformance(individualId, resultPM[0][1], rankingWalkforward)
+            performance = performanceDrawdownObject.calculateIndividualPerformanceFromMTM(startDate, endDate, individualId, dbObject)
+            dbObject.insertPerformance(individualId, performance, rankingWalkforward)
 
         # Updating ranks in db
         resultPerformanceList = dbObject.getRankedIndividuals(rankingWalkforward)

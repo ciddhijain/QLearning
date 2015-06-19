@@ -24,7 +24,10 @@ class PerformanceMeasures:
         for trades, dummy in resultShortTrades:
             if trades:
                 totalTrades = totalTrades + trades
-        performance = netPL/totalTrades
+        if totalTrades>0:
+            performance = netPL/totalTrades
+        else:
+            performance = gv.dummyPerformance
         return [performance, totalTrades]
 
     def CalculateTrainingTradesheetPerformanceMeasures(self, startDate, endDate, dbObject):
@@ -46,7 +49,10 @@ class PerformanceMeasures:
         for trades, dummy in resultShortTrades:
             if trades:
                 totalTrades = totalTrades + trades
-        performance = netPL/totalTrades
+        if totalTrades>0:
+            performance = netPL/totalTrades
+        else:
+            performance = gv.dummyPerformance
         return [performance, totalTrades]
 
     def CalculateReferenceTradesheetPerformanceMeasures(self, startDate, endDate, dbObject):
@@ -68,7 +74,10 @@ class PerformanceMeasures:
         for trades, dummy in resultShortTrades:
             if trades:
                 totalTrades = totalTrades + trades
-        performance = netPL/totalTrades
+        if totalTrades>0:
+            performance = netPL/totalTrades
+        else:
+            performance = gv.dummyPerformance
         return [performance, totalTrades]
 
 

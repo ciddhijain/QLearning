@@ -44,7 +44,6 @@ class QLearningWrapper:
         trainingObject = Training()
         liveObject = Live()
         reallocationObject = Reallocation()
-        plotObject = Plots()
         performanceObject = PerformanceMeasures()
         performanceOutfileName = gv.performanceOutfileNameBase + variableString
         performanceMonthlyOutfileName = gv.performanceMonthlyOutfileNameBase + variableString
@@ -93,20 +92,13 @@ class QLearningWrapper:
                 if liveEndDate>periodEndDate:
                     liveEndDate = periodEndDate
 
-        plotObject.plotRefTrades(dbObject)
-        plotObject.plotRefPL(dbObject)
-        plotObject.plotRefPLPerTrade(dbObject)
-        plotObject.plotAsset(testingStartDate, gv.endDate, dbObject)
-        plotObject.plotTrades(dbObject)
-        plotObject.plotPL(dbObject)
-        plotObject.plotPLPerTrade(dbObject)
-
         with open(performanceOutfileName, 'w') as fp:
             w = csv.writer(fp)
             w.writerow(["original performance", "number of trades", "q learning performance", "number of trades"])
             [performanceRef, tradesRef] = performanceObject.CalculateReferenceTradesheetPerformanceMeasures(testingStartDate, periodEndDate, dbObject)
             [performance, trades] = performanceObject.CalculateTradesheetPerformanceMeasures(testingStartDate, periodEndDate, dbObject)
-            w.writerow([performanceRef, tradesRef, performance, trades])
+            [performanceTraining, tradesTraining] = performanceObject.CalculateTrainingTradesheetPerformanceMeasures(testingStartDate, periodEndDate, dbObject)
+            w.writerow([performanceRef, tradesRef, performance, trades, performanceTraining, tradesTraining])
 
         done = False
         with open(performanceMonthlyOutfileName, 'w') as fp:
