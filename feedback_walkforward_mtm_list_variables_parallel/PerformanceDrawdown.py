@@ -32,27 +32,30 @@ class PerformanceDrawdown:
             drawdownDateCount = len(mtmList)
             count = 1
             ddHistory = []
-            if mtmList[0]<0:
-                ddHistory.append(mtmList[0])
-            else:
-                ddHistory.append(0)
-
-            while count<drawdownDateCount:
-                if(mtmList[count]<0):
-                    ddHistory.append(mtmList[count] + ddHistory[count-1])
+            if len(mtmList)>0:
+                if mtmList[0]<0:
+                    ddHistory.append(mtmList[0])
                 else:
                     ddHistory.append(0)
-                count += 1
 
-            maxDrawdown = 0
-            for dd in ddHistory:
-                if dd < maxDrawdown:
-                    maxDrawdown = dd
+                while count<drawdownDateCount:
+                    if(mtmList[count]<0):
+                        ddHistory.append(mtmList[count] + ddHistory[count-1])
+                    else:
+                        ddHistory.append(0)
+                    count += 1
 
-            if maxDrawdown==0:
-                return gv.dummyPerformance
+                maxDrawdown = 0
+                for dd in ddHistory:
+                    if dd < maxDrawdown:
+                        maxDrawdown = dd
+
+                if maxDrawdown==0:
+                    return gv.dummyPerformance
+                else:
+                    return netPL/(-1*maxDrawdown)
             else:
-                return netPL/maxDrawdown
+                return gv.dummyPerformance
 
     def calculatePerformance(self, startDate, endDate, individualId, dbObject):
         resultDates = dbObject.dbQuery("SELECT DISTINCT(date), 1 FROM price_series_table WHERE date >= '" + str(startDate)+
