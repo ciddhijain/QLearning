@@ -62,7 +62,7 @@ class Live:
                     resultIndividuals = dbObject.getIndividuals(date, startTime, date, endTime)
                     for individualId, dummy in resultIndividuals:
                         # Calculating mtm
-                        mtm = mtmObject.calculateMTM(individualId, date, startTime, date, endTime, dbObject)
+                        mtm = mtmObject.calculateNetPLTrades(individualId, date, startTime, date, endTime, dbObject)
                         # Calculating reward matrix
                         rewardMatrix = rewardMatrixObject.computeRM(mtm)
                         # Calculating q matrix
