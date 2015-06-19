@@ -44,10 +44,9 @@ class QLearningWrapper:
         trainingObject = Training()
         liveObject = Live()
         reallocationObject = Reallocation()
-        plotObject = Plots()
         performanceObject = PerformanceMeasures()
-        performanceOutfileName = gv.performanceOutfileNameBase + variableString
-        performanceMonthlyOutfileName = gv.performanceMonthlyOutfileNameBase + variableString
+        performanceOutfileName = gv.performanceOutfileNameBase + variableString + '.csv'
+        performanceMonthlyOutfileName = gv.performanceMonthlyOutfileNameBase + variableString + '.csv'
 
         dbObject.dbConnect()
 

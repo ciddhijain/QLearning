@@ -15,17 +15,17 @@ rankingDays = 15                                # This is the number of days for
 initializationDays = 15                         # This is the number of days for which q_matrix is initilaized
 liveDays = 30                                   # This is the number of days for which live trading is done
 
-logFileName = "QLearningRMALBK"
+logFileName = "QLearningRM_ALBK_"
 
-maxProcesses = 3                                # This is the number of maximum processes
+maxProcesses = 2                                # This is the number of maximum processes
 
 #-----------------------------------------------------------------------------------------------------------------------------------------
 # These variables need to contain list values
-alpha = [0.5, 0.4, 0.6]                         # This defines the weightage to long trades as compared to short trades while constructing reward matrix
+alpha = [0.5]                         # This defines the weightage to long trades as compared to short trades while constructing reward matrix
 gamma = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8]                         # This defines the weightage of old data as compared to latest observations of reward matrix
 maxGreedyLevel = [5]                 # This defines the number of future states for which reward is to be maximized in construction of q matrix
 individualFactor = [8]               # This defines the factor of total asset which is to be allocated to each strategy
-zeroRange = [0.006]                   # This determines the spread between states 0, 1, 2
+zeroRange = [0.002]                   # This determines the spread between states 0, 1, 2
 
 #------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -38,8 +38,8 @@ trainingMaxTotalAsset = maxTotalAsset*trainingFactor        # This is the total 
 
 dummyPerformance = -50000
 
-performanceMonthlyOutfileNameBase = 'performance monthly.csv'
-performanceOutfileNameBase = 'performance.csv'
+performanceMonthlyOutfileNameBase = 'performance monthly'
+performanceOutfileNameBase = 'performance'
 
 latestIndividualTableBase = "latest_individual_table"
 trainingTradesheetTableBase = "training_tradesheet_data_table"
