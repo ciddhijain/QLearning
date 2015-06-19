@@ -134,6 +134,12 @@ class DBUtils:
                            "' AND entry_date<='" + str(endDate) + "'"
         return databaseObject.Execute(queryIndividuals)
 
+    # Function to get individuals from original tradesheet in a given interval of dates
+    def getAllRefIndividuals(self):
+        global databaseObject
+        queryIndividuals = "SELECT DISTINCT(individual_id), 1 FROM old_tradesheet_data_table"
+        return databaseObject.Execute(queryIndividuals)
+
     # Function to get all individuals from original tradesheet
     def getAllIndividuals(self):
         global databaseObject

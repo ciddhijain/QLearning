@@ -42,7 +42,7 @@ if __name__ == "__main__":
     dbObject.dbQuery("DELETE FROM " + gv.rankingWalkforwardTableBase)
 
     mtmStartDate = gv.startDate
-    mtmEndDate = gv.endDate - timedelta(days=gv.liveDays) - timedelta(days=gv.initializationDays)
+    mtmEndDate = gv.endDate - timedelta(days=gv.liveDays) - timedelta(days=gv.initializationDays) + timedelta(days=1)
     logging.info("Starting mtm calculation")
     mtmOfflineObject.calculateDailyMTM(mtmStartDate, mtmEndDate, dbObject)
 
