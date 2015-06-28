@@ -11,8 +11,8 @@ dbConnector = 'mysqlconnector'                  # This is the connector string t
 
 startDate = datetime(2014, 12, 1).date()         # This is the start of training period
 endDate = datetime(2015, 4, 10).date()         # This is the end of training period
-rankingDays = 30                                # This is the number of days for which ranking is done
-initializationDays = 30                         # This is the number of days for which q_matrix is initilaized
+rankingDays = 15                                # This is the number of days for which ranking is done
+initializationDays = 15                         # This is the number of days for which q_matrix is initilaized
 liveDays = 30                                   # This is the number of days for which live trading is done
 
 logFileName = "QLearningALBK"
@@ -24,8 +24,8 @@ maxProcesses = 3                                # This is the number of maximum 
 alpha = [0.5, 0.4, 0.6, 0.2, 0.8]                         # This defines the weightage to long trades as compared to short trades while constructing reward matrix
 gamma = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8]                         # This defines the weightage of old data as compared to latest observations of reward matrix
 maxGreedyLevel = [5, 10]                 # This defines the number of future states for which reward is to be maximized in construction of q matrix
-individualFactor = [8, 10, 12]               # This defines the factor of total asset which is to be allocated to each strategy
-zeroRange = [0.002, 0.004, 0.006, 0.008, 0.01]                   # This determines the spread between states 0, 1, 2
+individualFactor = [8, 12]               # This defines the factor of total asset which is to be allocated to each strategy
+zeroRange = [0.002, 0.006, 0.01]                   # This determines the spread between states 0, 1, 2
 
 #------------------------------------------------------------------------------------------------------------------------------------------
 
