@@ -10,7 +10,6 @@ from Ranking import *
 from QMatrix import *
 from PerformanceMeasures import *
 from PerformanceDrawdown import *
-from Plots import *
 from Setup import *
 import calendar
 
@@ -80,6 +79,7 @@ class QLearningWrapper:
             trainingObject.train(trainingStartDate, trainingEndDate, walkforward, dbObject, mtmObject, rewardMatrixObject, qMatrixObject)
             dbObject.resetLatestIndividualsWalkForward()
             liveObject.live(liveStartDate, liveEndDate, walkforward, dbObject, mtmObject, rewardMatrixObject, qMatrixObject, reallocationObject)
+            walkforward += 1
             if liveEndDate>=periodEndDate:
                 done = True
             else:
