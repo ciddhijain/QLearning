@@ -4,8 +4,8 @@ The following steps are to be performed for running the code:
 3. Import base tradesheet in table 'old_tradesheet_data_table' and price series in 'price_series_table'
 4. Set values of other variables in 'GlobalVariables.py' as per requirement.
 5. Run file 'InputWrapper.py'
-6. Export tables 'tradesheet_data_table', 'asset_allocation_table', 'reallocation_table', 'asset_daily_allocation_table' before setting up another run on same DB.
-7. Also copy figures created and 'performance.csv', 'performance monthly.csv' formed in another folder before setting up another run
+6. Export tables 'tradesheet_data_table', 'training_tradesheet_data_table', 'asset_allocation_table', 'training_asset_allocation_table', 'reallocation_table', 'asset_daily_allocation_table' before setting up another run on same DB.
+7. Also copy 'performance.csv', 'performance monthly.csv' formed in another folder before setting up another run
 
 
 Following are details about a few files:
