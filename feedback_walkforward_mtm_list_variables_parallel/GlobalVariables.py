@@ -2,7 +2,7 @@ __author__ = 'Ciddhi'
 
 from datetime import timedelta, datetime
 
-databaseName = 'QL_ALBK'                            # This is database name to which connection is made
+databaseName = 'QL_AXIS'                            # This is database name to which connection is made
 userName = 'root'                               # This is the user name for database connection
 password = 'controljp'                          # This is the password for database connection
 dbHost = '127.0.0.1'                            # This is host address for database connection
@@ -15,7 +15,7 @@ rankingDays = 15                                # This is the number of days for
 initializationDays = 15                         # This is the number of days for which q_matrix is initilaized
 liveDays = 30                                   # This is the number of days for which live trading is done
 
-logFileName = "QLearningALBK"
+logFileName = "QLearningAXIS"
 
 maxProcesses = 3                                # This is the number of maximum processes
 
@@ -38,8 +38,8 @@ trainingMaxTotalAsset = maxTotalAsset*trainingFactor        # This is the total 
 
 dummyPerformance = -50000
 
-performanceMonthlyOutfileNameBase = 'performance monthly'
-performanceOutfileNameBase = 'performance'
+performanceMonthlyOutfileNameBase = 'axis mtm monthly 15 15 30'
+performanceOutfileNameBase = 'axis mtm 15 15 30'
 
 latestIndividualTableBase = "latest_individual_table"
 trainingTradesheetTableBase = "training_tradesheet_data_table"
