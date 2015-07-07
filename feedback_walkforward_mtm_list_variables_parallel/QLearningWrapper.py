@@ -15,31 +15,33 @@ import calendar
 
 class QLearningWrapper:
 
-    def feedback(self, alpha, gamma, individualFactor, zeroRange, greedyLevel, workId):
+    def feedback(self, alpha, gamma, beta, individualFactor, zeroRange, greedyLevel, workId):
 
         logging.basicConfig(filename=gv.logFileName + str(workId) + '.log', level=logging.INFO, format='%(asctime)s %(message)s')
 
         print(str(datetime.now()) + " Starting Q Learning for : ")
         print("alpha = " + str(alpha))
         print("gamma = " + str(gamma))
+        print("beta = " + str(beta))
         print("individual factor = " + str(individualFactor))
         print("zero range = " + str(zeroRange))
         print("greedy level = " + str(greedyLevel))
         logging.info("Starting Q Learning for : ")
         logging.info("alpha = " + str(alpha))
         logging.info("gamma = " + str(gamma))
+        logging.info("beta = " + str(beta))
         logging.info("individual factor = " + str(individualFactor))
         logging.info("zero range = " + str(zeroRange))
         logging.info("greedy level = " + str(greedyLevel))
         logging.info("\n")
 
-        setupObject = Setup(alpha, gamma, individualFactor, zeroRange, greedyLevel)
+        setupObject = Setup(alpha, gamma, beta, individualFactor, zeroRange, greedyLevel)
         [variableString, latestIndividualTable, trainingTradesheetTable, trainingAssetTable, qMatrixTable, reallocationTable, assetTable, dailyAssetTable, newTradesheetTable] = setupObject.createQLearningTables()
 
-        dbObject = DBUtils(alpha, gamma, individualFactor, zeroRange, greedyLevel, latestIndividualTable, trainingTradesheetTable, trainingAssetTable, qMatrixTable, reallocationTable, assetTable, dailyAssetTable, newTradesheetTable)
+        dbObject = DBUtils(alpha, gamma, beta, individualFactor, zeroRange, greedyLevel, latestIndividualTable, trainingTradesheetTable, trainingAssetTable, qMatrixTable, reallocationTable, assetTable, dailyAssetTable, newTradesheetTable)
         mtmObject = MTM()
         rewardMatrixObject = RewardMatrix(alpha)
-        qMatrixObject = QMatrix(gamma, greedyLevel)
+        qMatrixObject = QMatrix(gamma, greedyLevel, beta)
         trainingObject = Training()
         liveObject = Live()
         reallocationObject = Reallocation()

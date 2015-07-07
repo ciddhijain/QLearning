@@ -6,18 +6,21 @@ class Setup:
 
     alpha = None
     gamma = None
+    beta = None
     individualFactor = None
     zeroRange = None
     greedyLevel = None
 
-    def __init__(self, alpha_local, gamma_local, individualFactor_local, zeroRange_local, greedyLevel_local):
+    def __init__(self, alpha_local, gamma_local, beta_local, individualFactor_local, zeroRange_local, greedyLevel_local):
         global alpha
         global gamma
+        global beta
         global individualFactor
         global zeroRange
         global greedyLevel
         alpha = alpha_local
         gamma = gamma_local
+        beta = beta_local
         individualFactor = individualFactor_local
         zeroRange = zeroRange_local
         greedyLevel = greedyLevel_local
@@ -25,6 +28,7 @@ class Setup:
     def createQLearningTables(self):
         global alpha
         global gamma
+        global beta
         global individualFactor
         global zeroRange
         global greedyLevel
@@ -32,7 +36,7 @@ class Setup:
         dbObject = DBUtils()
         dbObject.dbConnect()
 
-        variableString = "_a_" + str(alpha).replace('.', '_') + "_g_" + str(gamma).replace('.', '_') + "_f_" + str(individualFactor).replace('.', '_') + "_r_" + str(zeroRange).replace('.', '_') + "_l_" + str(greedyLevel).replace('.', '_')
+        variableString = "a" + str(alpha).replace('.', '_') + "g" + str(gamma).replace('.', '_') + "b" + str(beta).replace('.', '_') + "f" + str(individualFactor).replace('.', '_') + "r" + str(zeroRange).replace('.', '_') + "l" + str(greedyLevel).replace('.', '_')
 
         latestIndividualTable = gv.latestIndividualTableBase + variableString
         trainingTradesheetTable = gv.trainingTradesheetTableBase + variableString

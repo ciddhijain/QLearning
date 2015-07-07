@@ -10,12 +10,13 @@ from multiprocessing import Pool
 def startProcess(work):
     alpha = work[0]
     gamma = work[1]
-    individualFactor = work[2]
-    zeroRange = work[3]
-    greedyLevel = work[4]
-    workId = work[5]
+    beta = work[2]
+    individualFactor = work[3]
+    zeroRange = work[4]
+    greedyLevel = work[5]
+    workId = work[6]
     qLearningObject = QLearningWrapper()
-    qLearningObject.feedback(alpha, gamma, individualFactor, zeroRange, greedyLevel, workId)
+    qLearningObject.feedback(alpha, gamma, beta, individualFactor, zeroRange, greedyLevel, workId)
     return 0
 
 if __name__ == "__main__":
@@ -26,6 +27,7 @@ if __name__ == "__main__":
 
     alphaList = gv.alpha
     gammaList = gv.gamma
+    betaList = gv.beta
     individualFactorList = gv.individualFactor
     zeroRangeList = gv.zeroRange
     greedyLevelList = gv.maxGreedyLevel
@@ -83,8 +85,9 @@ if __name__ == "__main__":
             for zeroRange in zeroRangeList:
                 for alpha in alphaList:
                     for gamma in gammaList:
-                        workList.append((alpha, gamma, individualFactor, zeroRange, greedyLevel, workId))
-                        workId += 1
+                        for beta in betaList:
+                            workList.append((alpha, gamma, beta, individualFactor, zeroRange, greedyLevel, workId))
+                            workId += 1
 
     logging.info("Done Ranking. Calling processes now.")
     pool.map(startProcess, workList)
