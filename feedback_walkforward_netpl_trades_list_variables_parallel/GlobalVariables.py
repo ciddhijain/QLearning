@@ -21,11 +21,12 @@ maxProcesses = 2                                # This is the number of maximum 
 
 #-----------------------------------------------------------------------------------------------------------------------------------------
 # These variables need to contain list values
-alpha = [0.5, 0.4, 0.6, 0.2, 0.8]                         # This defines the weightage to long trades as compared to short trades while constructing reward matrix
-gamma = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8]                         # This defines the weightage of old data as compared to latest observations of reward matrix
-maxGreedyLevel = [5]                 # This defines the number of future states for which reward is to be maximized in construction of q matrix
+beta = [0.5, 0.7, 0.3]
+alpha = [0.5, 0.7, 0.3]                         # This defines the weightage to long trades as compared to short trades while constructing reward matrix
+gamma = [0.5, 0.7, 0.3]                         # This defines the weightage of old data as compared to latest observations of reward matrix
+maxGreedyLevel = [5, 10]                 # This defines the number of future states for which reward is to be maximized in construction of q matrix
 individualFactor = [10]               # This defines the factor of total asset which is to be allocated to each strategy
-zeroRange = [0.002, 0.006, 0.01]                   # This determines the spread between states 0, 1, 2
+zeroRange = [0.005]                   # This determines the spread between states 0, 1, 2
 
 #------------------------------------------------------------------------------------------------------------------------------------------
 

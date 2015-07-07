@@ -10,16 +10,20 @@ class QMatrix:
 
     gamma = None
     maxGreedyLevel = None
+    beta = None
 
-    def __init__(self, gamma_local, greedyLevel_local):
+    def __init__(self, gamma_local, greedyLevel_local, beta_local):
         global gamma
         global maxGreedyLevel
+        global beta
         gamma = gamma_local
         maxGreedyLevel = greedyLevel_local
+        beta = beta_local
 
     def calculateQMatrix(self, rewardMatrix, individualId, dbObject):
         global gamma
         global maxGreedyLevel
+        global beta
 
         qm = np.zeros((3,3))
 
@@ -45,7 +49,7 @@ class QMatrix:
                 action = randint(0,2)
                 maxQValue = np.amax(qm, axis=1)[action]
                 # Update q value
-                qm[initialState,action] = rewardMatrix[initialState,action] + gamma * maxQValue
+                qm[initialState,action] = (1-beta) * qm[initialState, action] + beta*(rewardMatrix[initialState,action] + gamma * maxQValue)
                 initialState = action
                 greedyLevel = greedyLevel + 1
             iterations = iterations + 1

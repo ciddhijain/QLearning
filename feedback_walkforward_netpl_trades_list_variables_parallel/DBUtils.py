@@ -10,6 +10,7 @@ class DBUtils:
     databaseObject = None
     alpha = None
     gamma = None
+    beta = None
     individualFactor = None
     zeroRange = None
     greedyLevel = None
@@ -25,11 +26,12 @@ class DBUtils:
     reallocationTable = None
     performanceTable = None
 
-    def __init__(self, alpha_local=0, gamma_local=0, individualFactor_local=1, zeroRange_local=0, greedyLevel_local=0,
+    def __init__(self, alpha_local=0, gamma_local=0, beta_local=0, individualFactor_local=1, zeroRange_local=0, greedyLevel_local=0,
                  latestIndividualTable_local="", trainingTradesheetTable_local="", trainingAssetTable_local="", qMatrixTable_local="",
                  reallocationTable_local="", assetTable_local="", dailyAssetTable_local="", newTradesheetTable_local=""):
         global alpha
         global gamma
+        global beta
         global individualFactor
         global zeroRange
         global greedyLevel
@@ -47,6 +49,7 @@ class DBUtils:
 
         alpha = alpha_local
         gamma = gamma_local
+        beta = beta_local
         individualFactor = individualFactor_local
         zeroRange = zeroRange_local
         greedyLevel = greedyLevel_local
