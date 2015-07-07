@@ -38,7 +38,7 @@ class QLearningWrapper:
         setupObject = Setup(alpha, gamma, beta, individualFactor, zeroRange, greedyLevel)
         [variableString, latestIndividualTable, trainingTradesheetTable, trainingAssetTable, qMatrixTable, reallocationTable, assetTable, dailyAssetTable, newTradesheetTable] = setupObject.createQLearningTables()
 
-        dbObject = DBUtils(alpha, gamma, individualFactor, zeroRange, greedyLevel, latestIndividualTable, trainingTradesheetTable, trainingAssetTable, qMatrixTable, reallocationTable, assetTable, dailyAssetTable, newTradesheetTable)
+        dbObject = DBUtils(alpha, gamma, beta, individualFactor, zeroRange, greedyLevel, latestIndividualTable, trainingTradesheetTable, trainingAssetTable, qMatrixTable, reallocationTable, assetTable, dailyAssetTable, newTradesheetTable)
         mtmObject = NetPL_Trades()
         rewardMatrixObject = RewardMatrix(alpha)
         qMatrixObject = QMatrix(gamma, greedyLevel, beta)
